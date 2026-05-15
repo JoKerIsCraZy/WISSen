@@ -482,16 +482,25 @@
     nowSnapshot.upcomingToday.length > 2 ? nowSnapshot.upcomingToday.slice(2) : [],
   );
 
-  /* The next three actual lessons starting from `now`, regardless of which
-   * day they fall on. Powers the empty-day fallback: when there are no
-   * lessons today the 3-up hero row gets repurposed into a forward-looking
-   * "next three across the week" view instead of three idle placeholders. */
+  /* The next three actual lessons starting from `now`, but ONLY from the
+   * first future day that actually has lessons. Powers the empty-day
+   * fallback: when there are no lessons today, show the upcoming day's
+   * lessons as a coherent block instead of pulling random later lessons
+   * into slot 3 (which would visually suggest a contiguous schedule when
+   * there's actually a multi-day gap). */
   const upcomingAcrossWeek = $derived.by<StundenplanRow[]>(() => {
     if (!planEntries) return [];
     const t = now.getTime();
     const out: StundenplanRow[] = [];
+    let targetDay: Date | null = null;
     for (const e of planEntries) {
       if (e.start <= t) continue;
+      const eDay = new Date(e.start);
+      if (!targetDay) {
+        targetDay = eDay;
+      } else if (!isSameDay(eDay, targetDay)) {
+        break;
+      }
       out.push(e.row);
       if (out.length === 3) break;
     }
@@ -792,6 +801,8 @@
         {@const a = upcomingAcrossWeek[0] ?? null}
         {@const b = upcomingAcrossWeek[1] ?? null}
         {@const c = upcomingAcrossWeek[2] ?? null}
+        {@const nextDayLabel = a ? dateLabelFor(a) : ''}
+        {@const emptyAfter = nextDayLabel ? `Keine weitere Lektion am ${nextDayLabel}` : 'Keine weitere Lektion'}
         <LessonCard
           lesson={a}
           label="Als nächstes"
@@ -805,7 +816,7 @@
           label="Danach"
           hint={startsInMinutes(b)}
           dateLabel={dateLabelFor(b)}
-          emptyTitle="—"
+          emptyTitle={emptyAfter}
           {isOnline}
         />
         <LessonCard
@@ -813,7 +824,7 @@
           label="Danach"
           hint={startsInMinutes(c)}
           dateLabel={dateLabelFor(c)}
-          emptyTitle="—"
+          emptyTitle={emptyAfter}
           {isOnline}
         />
       {:else}
