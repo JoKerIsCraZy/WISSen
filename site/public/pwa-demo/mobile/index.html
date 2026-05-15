@@ -11,17 +11,17 @@
   <meta name="apple-mobile-web-app-title" content="WISSen" />
   <meta name="format-detection" content="telephone=no" />
   <title>WISSen</title>
-  <link rel="manifest" href="/pwa-demo/mobile/manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/pwa-demo/assets/favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/pwa-demo/assets/favicon-16.png" />
-  <link rel="apple-touch-icon" href="/pwa-demo/assets/apple-touch-icon.png" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/base.css" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/shell.css" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/cards.css" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/views.css" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/now.css" />
-  <link rel="stylesheet" href="/pwa-demo/mobile/css/responsive.css" />
-  <link rel="stylesheet" href="/pwa-demo/floorplans/raumview.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/shell.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/views.css" />
+  <link rel="stylesheet" href="css/now.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="../floorplans/raumview.css" />
 
   <!-- Demo-Mode: Scrollbars im Iframe ausblenden. Die PWA wird in einen
        Phone-Frame eingebettet — sichtbare Scrollbars zerstören die Illusion
@@ -48,7 +48,7 @@
   <div id="loginOverlay" class="m-login" hidden>
     <form id="loginForm" class="m-login__card" autocomplete="off">
       <div class="m-login__brand">
-        <img class="m-mark" src="/pwa-demo/assets/logo.webp" alt="" width="40" height="40" />
+        <img class="m-mark" src="../assets/logo.webp" alt="" width="40" height="40" />
         <h1>WISSen</h1>
       </div>
       <p class="m-login__lead">Authentifizierung erforderlich</p>
@@ -58,7 +58,7 @@
       </label>
       <div class="m-login__status" id="loginStatus"></div>
       <button class="m-btn m-btn--primary" type="submit">Anmelden</button>
-      <a class="m-login__back" href="/pwa-demo/">← zurück zum Dashboard</a>
+      <a class="m-login__back" href="../">← zurück zum Dashboard</a>
     </form>
   </div>
 
@@ -69,7 +69,7 @@
         <polyline points="15 18 9 12 15 6"/>
       </svg>
     </button>
-    <img class="m-appbar__logo" id="appbarLogo" src="/pwa-demo/assets/logo.webp" alt="" width="32" height="32" />
+    <img class="m-appbar__logo" id="appbarLogo" src="../assets/logo.webp" alt="" width="32" height="32" />
     <h1 class="m-appbar__title" id="appbarTitle">Noten</h1>
     <button id="refreshBtn" class="m-appbar__icon" type="button" aria-label="Neu laden" title="Aktualisieren">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -134,20 +134,20 @@
 
   <!-- Demo-Mode: mock-api MUST load BEFORE all PWA scripts so it patches
        window.fetch + presets the auth token before mobile.js runs. -->
-  <script src="/pwa-demo/mock-api.js"></script>
-  <script src="/pwa-demo/floorplans/data.js" defer></script>
-  <script src="/pwa-demo/floorplans/raumview.js" defer></script>
+  <script src="../mock-api.js"></script>
+  <script src="../floorplans/data.js" defer></script>
+  <script src="../floorplans/raumview.js" defer></script>
   <!-- View files declare top-level functions (renderAktuell, renderNoten, ...)
        that mobile.js's router map references at evaluation time. With `defer`,
        scripts execute in document order — these MUST come before mobile.js. -->
-  <script src="/pwa-demo/mobile/views/stundenplan.js" defer></script>
-  <script src="/pwa-demo/mobile/views/aktuell.js" defer></script>
-  <script src="/pwa-demo/mobile/views/modul.js" defer></script>
-  <script src="/pwa-demo/mobile/views/modul-sheet.js" defer></script>
-  <script src="/pwa-demo/mobile/views/noten.js" defer></script>
-  <script src="/pwa-demo/mobile/views/scrape.js" defer></script>
-  <script src="/pwa-demo/mobile/views/push.js" defer></script>
-  <script src="/pwa-demo/mobile/views/settings.js" defer></script>
-  <script src="/pwa-demo/mobile/mobile.js" defer></script>
+  <script src="views/stundenplan.js" defer></script>
+  <script src="views/aktuell.js" defer></script>
+  <script src="views/modul.js" defer></script>
+  <script src="views/modul-sheet.js" defer></script>
+  <script src="views/noten.js" defer></script>
+  <script src="views/scrape.js" defer></script>
+  <script src="views/push.js" defer></script>
+  <script src="views/settings.js" defer></script>
+  <script src="mobile.js" defer></script>
 </body>
 </html>
