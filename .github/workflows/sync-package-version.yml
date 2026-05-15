@@ -99,13 +99,22 @@ jobs:
           BRANCH="chore/sync-package-json-v${TARGET}"
 
           # Falls die Branch schon existiert (z.B. Re-Run), nimm sie und
-          # update sie statt zu duplizieren.
+          # update sie statt zu duplizieren. Bei "unrelated histories"
+          # (z.B. nach orphan-Push auf main, Repo-Rewrite, etc.) Branch
+          # verwerfen und frisch von origin/main neu erstellen — sonst
+          # bleibt der Workflow ewig hängen.
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
             git fetch origin "$BRANCH":"$BRANCH"
             git checkout "$BRANCH"
-            git merge --ff-only origin/main || git rebase origin/main
+            if ! git merge --ff-only origin/main 2>/dev/null; then
+              if ! git rebase origin/main 2>/dev/null; then
+                echo "::warning::Branch $BRANCH hat unrelated history zu origin/main — fresh recreate."
+                git rebase --abort 2>/dev/null || true
+                git checkout -B "$BRANCH" origin/main
+              fi
+            fi
           else
-            git checkout -b "$BRANCH"
+            git checkout -b "$BRANCH" origin/main
           fi
 
           # In-place Bump via npm pkg set — kein jq-Dependency, kein
