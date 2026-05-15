@@ -28,6 +28,9 @@ async function renderSettings() {
     errorShell(e.message || 'Fehler beim Laden der Einstellungen');
   }
 }
+// Static-analyser hint: renderSettings is consumed by the router in mobile.js,
+// which is a separate <script>. void-tag silences CodeQL's js/unused-local-variable.
+void renderSettings;
 // Local working copy of the schedule arrays (mutated by chips / time list).
 let settingsState = null;
 

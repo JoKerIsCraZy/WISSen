@@ -1,5 +1,6 @@
 ---
 const COMMAND = 'docker run -d -p 3000:3000 ghcr.io/jokeriscrazy/wissen:latest';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <section class="tm-cta">
@@ -41,8 +42,8 @@ const COMMAND = 'docker run -d -p 3000:3000 ghcr.io/jokeriscrazy/wissen:latest';
     </div>
 
     <div class="tm-cta__actions">
-      <a href="/start/quick-start/" class="tm-btn tm-btn--primary">Quick Start</a>
-      <a href="/projekt/lizenz/" class="tm-btn tm-btn--ghost">Lizenz lesen</a>
+      <a href={`${base}/start/quick-start/`} class="tm-btn tm-btn--primary">Quick Start</a>
+      <a href={`${base}/projekt/lizenz/`} class="tm-btn tm-btn--ghost">Lizenz lesen</a>
     </div>
   </div>
 </section>

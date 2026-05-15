@@ -38,6 +38,13 @@ ARG APT_REFRESH=2026-W19
 # Retrying with `dpkg --configure -a` finishes the half-configured package on
 # the next attempt — observed working consistently for this base image.
 # Reference: https://github.com/docker-library/official-images/issues/16637
+#
+# hadolint ignore=DL3008
+# Begründung: gosu/tzdata werden vom upstream Playwright-Base auf den jeweils
+# letzten apt-Stand erwartet (Ubuntu phases out exact apt versions in security
+# pockets, pinning bricht den Build wenn der pin nach dem nächsten Ubuntu-
+# Security-Refresh nicht mehr existiert). APT_REFRESH cache-bust + npm pin
+# (Zeile darunter) decken die supply-chain-Seite ab.
 RUN echo "apt-refresh=${APT_REFRESH}" \
  && ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
  && echo "Europe/Zurich" > /etc/timezone \
@@ -115,6 +122,12 @@ RUN mkdir -p /app/data /home/app/.cache \
 
 # Container starts as root so the entrypoint can apply PUID/PGID and chown
 # the volume; the entrypoint then drops to the `app` user via gosu.
+#
+# hadolint ignore=DL3002
+# Begründung: USER root am Ende ist hier intendiert. Der entrypoint braucht
+# root um PUID/PGID auf die bind-mounted volume anzuwenden und chownt /app/data
+# bevor er via `gosu app` auf den unprivileged `app` user wechselt. Ein
+# permanentes USER app würde PUID/PGID-Handling unmöglich machen.
 
 EXPOSE 3000
 

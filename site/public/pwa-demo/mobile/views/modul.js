@@ -21,6 +21,9 @@ async function renderModul(kuerzelId, kuerzelCodeHint) {
     errorShell(e.message || 'Fehler beim Laden des Moduls');
   }
 }
+// Static-analyser hint: renderModul is consumed by the router in mobile.js
+// (separate <script>). void-tag silences CodeQL's js/unused-local-variable.
+void renderModul;
 function computeWeighted(rows) {
   const scored = rows.filter(r => r.bewertung != null);
   if (!scored.length) return null;

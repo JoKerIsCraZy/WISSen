@@ -41,6 +41,9 @@ jobs:
       - name: Trivy Dockerfile scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
+          # version pinned (vs. implicit latest) — zizmor unpinned-tools.
+          # Bump in lockstep with the action SHA above when Dependabot opens a PR.
+          version: v0.70.0
           scan-type: 'config'
           scan-ref: '.'
           format: 'sarif'
@@ -50,7 +53,7 @@ jobs:
           trivyignores: '.trivyignore'
 
       - name: Upload config SARIF to Security tab
-        uses: github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
+        uses: github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4.35.4
         if: always()
         with:
           sarif_file: 'trivy-config.sarif'
@@ -88,6 +91,8 @@ jobs:
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
+          # version pinned (vs. implicit latest) — zizmor unpinned-tools.
+          version: v0.70.0
           image-ref: 'wissen:trivy'
           format: 'sarif'
           output: 'trivy-image.sarif'
@@ -97,7 +102,7 @@ jobs:
           trivyignores: '.trivyignore'
 
       - name: Upload image SARIF to Security tab
-        uses: github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
+        uses: github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4.35.4
         if: always()
         with:
           sarif_file: 'trivy-image.sarif'

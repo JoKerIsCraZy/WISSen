@@ -20,8 +20,8 @@ const { id = 'demo', showCopy = true } = Astro.props;
 // PWA-Demo liegt unter site/public/pwa-demo/mobile/ → nach Build unter
 // {base}/pwa-demo/mobile/. Auf GitHub Pages ist base = '/wissen' →
 // hardcoded /pwa-demo/... würde auf 404 zeigen. BASE_URL prefixen.
-const baseUrl = import.meta.env.BASE_URL;
-const demoSrc = `${baseUrl.replace(/\/$/, '')}/pwa-demo/mobile/index.html`;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const demoSrc = `${baseUrl}/pwa-demo/mobile/index.html`;
 ---
 
 <section class="tm-live" id={id}>
@@ -42,8 +42,8 @@ const demoSrc = `${baseUrl.replace(/\/$/, '')}/pwa-demo/mobile/index.html`;
         <li><span class="tm-bullet">●</span> Inline-Raumplan zeigt das Stockwerk live</li>
       </ul>
       <div class="tm-live__actions">
-        <a href="/start/quick-start/" class="tm-link-arrow">Selber installieren <span aria-hidden="true">→</span></a>
-        <a href="/features/mobile-pwa/" class="tm-link-arrow">PWA-Doku <span aria-hidden="true">→</span></a>
+        <a href={`${baseUrl}/start/quick-start/`} class="tm-link-arrow">Selber installieren <span aria-hidden="true">→</span></a>
+        <a href={`${baseUrl}/features/mobile-pwa/`} class="tm-link-arrow">PWA-Doku <span aria-hidden="true">→</span></a>
       </div>
     </div>
   )}

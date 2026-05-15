@@ -22,6 +22,9 @@ async function renderNoten() {
     errorShell(e.message || 'Fehler beim Laden der Noten');
   }
 }
+// Static-analyser hint: renderNoten is consumed by the router in mobile.js
+// (separate <script>). void-tag silences CodeQL's js/unused-local-variable.
+void renderNoten;
 function drawNoten(data) {
   main.replaceChildren();
 

@@ -531,3 +531,21 @@ loginForm.addEventListener('submit', async (ev) => {
   fetchInitialStatus();
   connectSSE();
 })();
+
+/* ============================================================
+   Cross-file linkage — declared here so static analysers (CodeQL) see
+   that these top-level helpers + module-globals are intentionally
+   consumed by sibling view files (views/*.js) loaded as separate
+   <script>s. Without this, CodeQL flags each as "unused local"
+   because single-file analysis can't see the cross-script use.
+   ============================================================ */
+void titleEl;
+void gradeClass;
+void fmtGrade;
+void buildTitle;
+void fmtRelativePast;
+void fmtRelativeFuture;
+void loadingShell;
+void errorShell;
+void observeFresh;
+void scrapeTimerHandle;

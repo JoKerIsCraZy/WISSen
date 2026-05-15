@@ -274,3 +274,10 @@ async function disablePush() {
     toast('Deaktivieren fehlgeschlagen', 'err');
   }
 }
+
+// Static-analyser hint: these helpers are consumed by views/settings.js
+// (separate <script>). void-tag silences CodeQL's js/unused-local-variable.
+void refreshDiag;
+void refreshPushStatus;
+void enablePush;
+void disablePush;

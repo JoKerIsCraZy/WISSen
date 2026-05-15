@@ -1,6 +1,7 @@
 ---
 // Visual showcase: pixel-faithful WISSen PWA mockup + side narrative.
 // Mirrors web/mobile/css tokens 1:1 — bg #0f1115, accent #6ea8fe, etc.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <section class="tm-showcase">
@@ -21,8 +22,8 @@
       <li><span class="tm-bullet">●</span> Inline-Raumpläne mit Live-Highlight</li>
     </ul>
     <div class="tm-showcase__actions">
-      <a href="/features/mobile-pwa/" class="tm-link-arrow">Mobile-App-Doku <span aria-hidden="true">→</span></a>
-      <a href="/features/push/" class="tm-link-arrow">Push einrichten <span aria-hidden="true">→</span></a>
+      <a href={`${base}/features/mobile-pwa/`} class="tm-link-arrow">Mobile-App-Doku <span aria-hidden="true">→</span></a>
+      <a href={`${base}/features/push/`} class="tm-link-arrow">Push einrichten <span aria-hidden="true">→</span></a>
     </div>
   </div>
 

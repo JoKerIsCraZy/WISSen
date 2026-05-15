@@ -19,6 +19,9 @@ async function renderStundenplan() {
     errorShell(e.message || 'Fehler beim Laden des Stundenplans');
   }
 }
+// Static-analyser hint: renderStundenplan is consumed by the router in mobile.js
+// (separate <script>). void-tag silences CodeQL's js/unused-local-variable.
+void renderStundenplan;
 function drawStundenplan(data) {
   main.replaceChildren();
   const rows = (data && data.rows) || [];
