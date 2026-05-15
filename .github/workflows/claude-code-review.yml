@@ -15,11 +15,10 @@ permissions:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    # Skip Dependabot/Bot-PRs komplett und nur laufen wenn das Secret gesetzt ist
+    if: |
+      vars.CLAUDE_REVIEW_ENABLED == 'true' &&
+      github.event.pull_request.user.type != 'Bot'
 
     runs-on: ubuntu-latest
     permissions:
@@ -40,6 +39,9 @@ jobs:
         uses: anthropics/claude-code-action@dde2242db6af13460b916652159b6ba19a598f30 # v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Bots wie dependabot[bot] werden bereits oben durch das if:-Gate ausgeschlossen;
+          # falls man sie spaeter doch reinlassen will, hier '*' oder konkrete Namen setzen.
+          allowed_bots: ''
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'

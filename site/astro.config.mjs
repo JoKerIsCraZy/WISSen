@@ -10,7 +10,7 @@ export default defineConfig({
       title: 'WISSen',
       description: 'Inoffizieller Scraper für das WISS Tocco-Schulportal — Noten, Stundenplan, PWA, Telegram-Bot, Push-Benachrichtigungen aus einem Guss.',
       logo: {
-        src: './src/assets/logo.png',
+        src: './src/assets/logo.webp',
         alt: 'WISSen Logo',
         replacesTitle: false,
       },
