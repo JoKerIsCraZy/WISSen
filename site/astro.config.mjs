@@ -12,7 +12,10 @@ export default defineConfig({
       logo: {
         src: './src/assets/logo.webp',
         alt: 'WISSen Logo',
-        replacesTitle: false,
+        // Logo ersetzt den "WISSen"-Title im Header — sonst doppelt mit dem
+        // Hero-H1 unten ("Deine WISS-Noten, live auf deinem Handy.")
+        // visuell konkurrenzierend direkt darunter.
+        replacesTitle: true,
       },
       favicon: '/favicon.ico',
       defaultLocale: 'root',

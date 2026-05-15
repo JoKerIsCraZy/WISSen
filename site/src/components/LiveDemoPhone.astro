@@ -16,6 +16,12 @@ interface Props {
 }
 
 const { id = 'demo', showCopy = true } = Astro.props;
+
+// PWA-Demo liegt unter site/public/pwa-demo/mobile/ → nach Build unter
+// {base}/pwa-demo/mobile/. Auf GitHub Pages ist base = '/wissen' →
+// hardcoded /pwa-demo/... würde auf 404 zeigen. BASE_URL prefixen.
+const baseUrl = import.meta.env.BASE_URL;
+const demoSrc = `${baseUrl.replace(/\/$/, '')}/pwa-demo/mobile/index.html`;
 ---
 
 <section class="tm-live" id={id}>
@@ -56,7 +62,7 @@ const { id = 'demo', showCopy = true } = Astro.props;
              requests get hijacked by Starlight's catch-all route handler.
              Including the filename bypasses the route-matcher. -->
         <iframe
-          src="/pwa-demo/mobile/index.html"
+          src={demoSrc}
           title="WISSen PWA — Live Demo"
           loading="lazy"
           allow="clipboard-write"
