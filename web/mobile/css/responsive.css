@@ -1,0 +1,91 @@
+/* ============================================================
+   WISSen — Cross-device responsiveness
+   Safe-area handling, narrow phones, landscape, larger screens,
+   touch-target safety net.
+   ============================================================ */
+
+/* Side safe-area insets on the main content area (landscape iPhone with
+   notch on the side, foldables) so content doesn't get clipped. */
+.m-main {
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+}
+.m-appbar {
+  padding-left: max(8px, env(safe-area-inset-left, 0px));
+  padding-right: max(4px, env(safe-area-inset-right, 0px));
+}
+
+/* Very narrow phones (Galaxy Z Flip closed at ~272px, old Androids ≤360px,
+   foldables in cover-display mode). Reduce padding + tighten typography.
+   WICHTIG: --bottomnav-h NICHT mehr auf 60px reduzieren — das drückte die
+   Tab-Hit-Area unter den 44px-Touch-Target-Mindestwert. Bleibt jetzt bei
+   den default 64px aus base.css. */
+@media (max-width: 360px) {
+  :root {
+    --appbar-h: 52px;
+  }
+  .m-main {
+    padding-top: 12px;
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
+  }
+  .m-appbar__title { font-size: 16px; }
+  .m-tab__label { font-size: 10px; }
+  .m-tab__icon { width: 44px; height: 28px; }
+  .m-now-card { padding: 12px 14px; }
+  .m-now-card__time { font-size: 20px; }
+  .m-now-card__title { font-size: 15px; }
+  .m-now-tiles { gap: 8px; }
+  .m-now-tile { padding: 10px 12px; }
+  .m-now-tile__val { font-size: 18px; }
+}
+
+/* Landscape phones — short screens. Bottom-nav eats too much vertical
+   space. Reduce its height + appbar so content has more room. */
+@media (orientation: landscape) and (max-height: 480px) {
+  :root {
+    --appbar-h: 44px;
+    --bottomnav-h: 48px;
+  }
+  .m-tab { gap: 0; }
+  .m-tab__label { font-size: 10px; }
+  .m-tab__icon { width: 40px; height: 24px; }
+  .m-tab__icon svg { width: 18px; height: 18px; }
+  .m-appbar__title { font-size: 16px; }
+}
+
+/* Larger phones / phablets / when /mobile/ is loaded on tablet by mistake.
+   Cap content width so it doesn't stretch infinitely. */
+@media (min-width: 600px) {
+  .m-main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  /* Tab bar stays full-width but cap inner buttons by centering nav-content. */
+  .m-bottomnav {
+    /* Adding a max-width on the nav itself would leave gaps on the sides;
+       instead, keep nav full-width but cap the tab cluster width via
+       padding so tabs stay reachable by thumb. */
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .m-appbar__inner-cap {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+
+/* High-DPI handling for the floor strip — already SVG/HTML-based so
+   nothing per-DPI needed. */
+
+/* Touch-target safety net: every tab/button/anchor minimum 44px hit area. */
+.m-tab,
+.m-card[role="button"],
+.m-plan-card--clickable,
+.m-appbar__icon,
+.m-btn {
+  min-height: 44px;
+}

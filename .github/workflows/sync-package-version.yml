@@ -1,0 +1,162 @@
+name: Sync package.json version on release
+
+# Hält die Root-package.json-Version synchron mit dem zuletzt veröffentlichten
+# GitHub-Release-Tag. Triggert auf release: published — sobald du den Draft
+# aus release-drafter veröffentlichst, läuft dieser Workflow und öffnet einen
+# PR der package.json (+ web-svelte/, site/ via sync-script) auf die
+# Tag-Version setzt.
+#
+# Warum PR statt Direct-Push? Branch-Protection auf main verlangt einen
+# approving Review. GITHUB_TOKEN kann das nicht bypassen, ohne einen
+# zusätzlichen PAT oder eine GitHub-App mit Bypass-Rechten würde ein
+# Direct-Push fehlschlagen. Auto-PR ist sauberer + auditbar — du admin-merged
+# ihn dann (oder Auto-Merge wenn du das aktivierst).
+#
+# Workflow-dispatch zusätzlich: falls du package.json mal manuell bumpen
+# willst ohne neuen Release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (ohne v-Prefix, z.B. 1.2.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  bump:
+    name: Bump package.json + open PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Determine target version
+        id: ver
+        env:
+          # zizmor template-injection (#199/#200): ${{ }}-Werte NICHT inline in
+          # den run-Block — GitHub expandiert sie als Text VOR dem Shell-Parsing,
+          # ein bösartiger Tag-/Input-Wert würde aus dem String ausbrechen
+          # (Code-Injection im Runner mit write-Token). Via env: landen sie als
+          # echte Env-Vars, Shell-Metazeichen sind dann inert.
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then
+            RAW="$RELEASE_TAG"
+          else
+            RAW="$INPUT_VERSION"
+          fi
+          # Strip optional v-Prefix
+          VER="${RAW#v}"
+          # Sanity-Check: muss semver-artig sein. Enge prerelease/build-Zeichen
+          # statt .* — sonst käme z.B. "1.2.3-$(whoami)" durch den Check.
+          if ! echo "$VER" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$'; then
+            echo "::error::Version '$VER' sieht nicht wie semver aus"
+            exit 1
+          fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Target version: $VER"
+
+      - name: Check current package.json version
+        id: check
+        env:
+          # zizmor template-injection (#201): steps.ver.outputs.version ist oben
+          # zwar regex-validiert, aber via env: statt inline-${{ }} ist es
+          # konsistent und robust gegen künftige Regex-Lockerungen.
+          TARGET: ${{ steps.ver.outputs.version }}
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "Current: $CURRENT"
+          echo "Target:  $TARGET"
+          if [ "$CURRENT" = "$TARGET" ]; then
+            echo "needs_bump=false" >> "$GITHUB_OUTPUT"
+            echo "✓ package.json bereits auf $TARGET — nothing to do"
+          else
+            echo "needs_bump=true" >> "$GITHUB_OUTPUT"
+            echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump package.json + commit on branch
+        if: steps.check.outputs.needs_bump == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET: ${{ steps.ver.outputs.version }}
+          CURRENT: ${{ steps.check.outputs.current }}
+        run: |
+          BRANCH="chore/sync-package-json-v${TARGET}"
+
+          # Falls die Branch schon existiert (z.B. Re-Run), nimm sie und
+          # update sie statt zu duplizieren.
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH":"$BRANCH"
+            git checkout "$BRANCH"
+            git merge --ff-only origin/main || git rebase origin/main
+          else
+            git checkout -b "$BRANCH"
+          fi
+
+          # In-place Bump via npm pkg set — kein jq-Dependency, kein
+          # Quoting-Pain, npm-native und respektiert die exakte Formatierung.
+          npm pkg set "version=${TARGET}"
+
+          # Sub-Packages mit-synchronisieren (web-svelte/, site/). Ohne
+          # diesen Schritt würde das Build-Log "wissen-web@1.0.0"
+          # zeigen während das Backend bei v1.1.x ist.
+          node scripts/sync-web-version.mjs
+
+          if git diff --quiet package.json package-lock.json web-svelte/package.json site/package.json 2>/dev/null; then
+            echo "Keine Änderung nötig"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json web-svelte/package.json site/package.json 2>/dev/null || git add package.json web-svelte/package.json site/package.json
+          # Mehrere -m statt eingebetteter Newlines — vermeidet YAML-Parse-
+          # Fehler durch nicht-indentierte Folgezeilen im block-scalar.
+          git commit \
+            -m "chore(release): package.json auf v${TARGET} bumpen" \
+            -m "Sync nach Release v${TARGET}. Hält /api/version + Mobile-Settings-About-Panel synchron mit dem veröffentlichten Release-Tag." \
+            -m "Vorher: v${CURRENT}" \
+            -m "Nachher: v${TARGET}"
+          git push --force-with-lease origin "$BRANCH"
+
+          # PR öffnen — falls schon offen, gh pr create bringt einen
+          # Hinweis aber wir wollen das nicht als Fehler werten.
+          if ! gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
+            # Body via tmp-file statt eingebettetem Heredoc — vermeidet
+            # YAML-Parse-Fehler durch nicht-indentierte Folgezeilen im
+            # block-scalar (GitHub Actions würde den Workflow sonst gar
+            # nicht erst registrieren).
+            BODY_FILE="$(mktemp)"
+            {
+              printf 'Auto-bump nach Release **v%s**.\n\n' "${TARGET}"
+              printf 'Hält folgende Anzeigen synchron mit dem veröffentlichten Release-Tag:\n'
+              printf -- '- `GET /api/version` (Backend)\n'
+              printf -- '- "Über"-Sektion in Mobile-Settings (Docker-Image)\n'
+              printf -- '- ggf. weitere version-derived Surfaces\n\n'
+              printf 'Vorher: `v%s` → Nachher: `v%s`\n\n' "${CURRENT}" "${TARGET}"
+              printf '_Auto-generiert von [.github/workflows/sync-package-version.yml](./.github/workflows/sync-package-version.yml)._\n'
+            } > "$BODY_FILE"
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "chore(release): package.json auf v${TARGET} bumpen" \
+              --body-file "$BODY_FILE"
+            rm -f "$BODY_FILE"
+          else
+            echo "PR für $BRANCH existiert bereits"
+          fi

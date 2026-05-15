@@ -1,0 +1,32 @@
+/* TEAM */
+
+  Entwickler: JoKeRIsCraZy (Elio)
+  Kontakt: github.com/JoKerIsCraZy
+  Standort: Schweiz
+
+/* PROJEKT */
+
+  Name: WISSen
+  Beschreibung: Inoffizieller Scraper für das WISS Tocco-Schulportal —
+                Noten, Stundenplan, PWA, Telegram-Bot, Push-Notifications.
+  Lizenz: MIT
+  Repo: https://github.com/JoKerIsCraZy/wissen
+  Site: https://jokeriscrazy.github.io/wissen/
+
+/* TECH-STACK */
+
+  Backend: Node.js, Express
+  Web V2: SvelteKit
+  Docs: Astro Starlight
+  Mobile/PWA: Web Push, Service Worker
+  Bot: Telegraf (Telegram)
+  Scraping: Playwright
+
+/* DANK AN */
+
+  Open-Source-Welt — ohne euch wäre das nicht möglich.
+  Insbesondere: Node.js, SvelteKit, Astro, Starlight, Playwright,
+  Telegraf, web-push, Express, sharp, shiki.
+
+  Hinweis: Tocco AG ist nicht mit diesem Projekt verbunden.
+           WISSen ist ein inoffizielles, eigenständiges Projekt.

@@ -1,0 +1,152 @@
+# Release-Drafter Config (Drafter sucht im .github/-Root, nicht in workflows/)
+
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# Versionsauflösung — Labels bestimmen, ob Major/Minor/Patch
+version-resolver:
+  major:
+    labels:
+      - 'major'
+      - 'breaking'
+      - 'major-bump'      # bestehender Label von dependabot-auto-merge.yml
+  minor:
+    labels:
+      - 'minor'
+      - 'feature'
+      - 'enhancement'
+  patch:
+    labels:
+      - 'patch'
+      - 'fix'
+      - 'bug'
+      - 'chore'
+      - 'docs'
+  default: patch
+
+# Kategorisierung nach Conventional-Commits-Typ (matched gegen PR-Title)
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+    rules:
+      - title: '/^feat(\(.+\))?:/'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bug'
+    rules:
+      - title: '/^fix(\(.+\))?:/'
+  - title: '⚡ Performance'
+    labels:
+      - 'perf'
+      - 'performance'
+    rules:
+      - title: '/^perf(\(.+\))?:/'
+  - title: '🔧 Refactor'
+    labels:
+      - 'refactor'
+    rules:
+      - title: '/^refactor(\(.+\))?:/'
+  - title: '🔒 Security'
+    labels:
+      - 'security'
+  - title: '📚 Documentation'
+    labels:
+      - 'documentation'
+    rules:
+      - title: '/^docs(\(.+\))?:/'
+  - title: '🧪 Tests'
+    labels:
+      - 'test'
+    rules:
+      - title: '/^test(\(.+\))?:/'
+  - title: '🤖 CI / Build'
+    labels:
+      - 'ci'
+      - 'build'
+    rules:
+      - title: '/^(ci|build)(\(.+\))?:/'
+  - title: '🧹 Chores & Maintenance'
+    labels:
+      - 'chore'
+      - 'dependencies'
+    rules:
+      - title: '/^chore(\(.+\))?:/'
+  - title: '⏪ Reverts'
+    labels:
+      - 'revert'
+    rules:
+      - title: '/^revert(\(.+\))?:/'
+
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&'
+
+# Auto-Labeler — labelt PRs basierend auf Branch/Title/Files
+autolabeler:
+  - label: 'feature'
+    title:
+      - '/^feat(\(.+\))?:/i'
+  - label: 'fix'
+    title:
+      - '/^fix(\(.+\))?:/i'
+  - label: 'chore'
+    title:
+      - '/^chore(\(.+\))?:/i'
+  - label: 'documentation'
+    title:
+      - '/^docs(\(.+\))?:/i'
+    files:
+      - '**/*.md'
+  - label: 'docker'
+    files:
+      - 'Dockerfile'
+      - 'docker/**'
+      - 'docker-compose*.yml'
+  - label: 'frontend'
+    files:
+      - 'web-svelte/**'
+      - 'web/**'
+  - label: 'scraper'
+    files:
+      - 'src/scraper.js'
+      - 'src/runScrape.js'
+  - label: 'telegram'
+    files:
+      - 'src/bot/**'
+  - label: 'ci'
+    files:
+      - '.github/workflows/**'
+    title:
+      - '/^ci(\(.+\))?:/i'
+  - label: 'build'
+    title:
+      - '/^build(\(.+\))?:/i'
+  - label: 'perf'
+    title:
+      - '/^perf(\(.+\))?:/i'
+  - label: 'refactor'
+    title:
+      - '/^refactor(\(.+\))?:/i'
+  - label: 'test'
+    title:
+      - '/^test(\(.+\))?:/i'
+  - label: 'revert'
+    title:
+      - '/^revert(\(.+\))?:/i'
+  - label: 'security'
+    title:
+      - '/security/i'
+      - '/CVE-\d+/i'
+
+template: |
+  ## Was ist neu in $RESOLVED_VERSION
+
+  $CHANGES
+
+  ## Mitwirkende
+
+  Danke an alle Beitragenden dieses Releases: $CONTRIBUTORS
+
+  **Voller Changelog:** https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

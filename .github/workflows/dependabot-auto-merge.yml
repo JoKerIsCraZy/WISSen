@@ -1,0 +1,49 @@
+name: Dependabot Auto-Merge
+
+# zizmor: ignore[dangerous-triggers]
+# Begründung: pull_request_target wird gezielt verwendet, weil Dependabot-PRs
+# read-only Secrets brauchen. Job hat strict guard `if: github.event.pull_request.user.login == 'dependabot[bot]'`
+# und checkt NICHT untrusted PR-Code aus.
+on: pull_request_target
+
+permissions:
+  contents: read
+
+jobs:
+  auto-merge:
+    name: Auto-merge safe dependabot updates
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (patch + minor only)
+        if: >
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          steps.meta.outputs.update-type == 'version-update:semver-minor'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+        run: |
+          gh pr merge --auto --rebase --delete-branch "$PR_URL"
+          gh pr comment "$PR_URL" --body "🤖 Auto-merge aktiviert ($UPDATE_TYPE). Wird gemerged sobald alle Checks grün sind."
+
+      - name: Flag major update for manual review
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          DEP_NAMES: ${{ steps.meta.outputs.dependency-names }}
+          PREVIOUS_VERSION: ${{ steps.meta.outputs.previous-version }}
+          NEW_VERSION: ${{ steps.meta.outputs.new-version }}
+        run: |
+          gh pr comment "$PR_URL" --body "⚠️  **Major-Version-Bump** ($DEP_NAMES: $PREVIOUS_VERSION → $NEW_VERSION) — manueller Review erforderlich wegen möglicher Breaking Changes."
+          gh pr edit "$PR_URL" --add-label "major-bump,needs-review"

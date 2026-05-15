@@ -1,0 +1,127 @@
+/* ============================================================
+   WISSen — Mobile / PWA Shell — base tokens + element resets
+   Reuses the Dashboard color & type tokens, but layout is
+   single-column, sticky AppBar + Bottom-Nav (Material-3-Feel).
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg: #0f1115;
+  --bg-elev: #141821;
+  --surface: #1a1d24;
+  --surface-press-bg: #171a21;  /* gradient bottom-stop for cards/scrape */
+  --surface-2: #20242d;
+  --surface-3: #262b36;
+  --border: #2d3341;
+  --border-soft: #232834;
+
+  /* Text */
+  --text: #e7ebf3;
+  --text-mute: #9aa3b5;
+  --text-dim: #6b7383;
+
+  /* Accents */
+  --accent: #6ea8fe;
+  --accent-ink: #0b1220;
+  --accent-soft: rgba(110, 168, 254, 0.12);
+  --accent-border: rgba(110, 168, 254, 0.35);
+  /* Token-derived Akzent-Tints — vorher als hardcoded rgba() in now.css /
+   * shell.css verteilt. Werden über das Status-Hue (Cornflower 250) gestaffelt
+   * gehalten, damit eine Änderung an --accent zukünftig nicht mehrere Files
+   * mitziehen muss. */
+  --accent-glow:   rgba(110, 168, 254, 0.08); /* Tile-Glow / Radial-Background */
+  --accent-pulse:  rgba(110, 168, 254, 0.35); /* GPU-Pulse-Ring (Now-Card) */
+  --accent-flash:  rgba(110, 168, 254, 0.45); /* Flash-Peak — derzeit reserviert */
+  --accent-shadow: rgba(110, 168, 254, 0.18); /* Halo um Pulse-Dot */
+
+  --success: #4cc9a0;
+  --warning: #ffa94d;
+  --danger: #ff6b6b;
+
+  /* Warning-Tints (= --warning gestaffelt) — vorher in cards.css hardcoded.
+   * "Frisch"-Markierung + "Neu"-Pill + Flash-Animation teilen sich dieselbe
+   * Hue, der Alpha bestimmt nur die Intensität. */
+  --warning-soft:        rgba(255, 169, 77, 0.14); /* Pill-Background, dezent */
+  --warning-soft-strong: rgba(255, 169, 77, 0.18); /* Card-is-fresh Gradient-Start */
+  --warning-border:      rgba(255, 169, 77, 0.35); /* Card-is-fresh Border */
+  --warning-flash:       rgba(255, 169, 77, 0.42); /* Plan-Card Flash-Overlay */
+
+  /* Danger-Tints — Swipe-Backdrop (Letzte-Änderung-Liste in now.css) und
+   * Toast-Error-Border in shell.css. Idle/armed-Stufen für taktiles Feedback. */
+  --danger-soft:        rgba(255, 107, 107, 0.10); /* Mid-stop bei is-armed */
+  --danger-soft-hint:   rgba(255, 107, 107, 0.06); /* Mid-stop idle */
+  --danger-soft-strong: rgba(255, 107, 107, 0.18);
+  --danger-bg:          rgba(255, 107, 107, 0.22); /* Backdrop idle Start */
+  --danger-bg-armed:    rgba(255, 107, 107, 0.32); /* Backdrop armed Start */
+  --danger-border:      rgba(255, 107, 107, 0.35);
+  --danger-border-strong: rgba(255, 107, 107, 0.45); /* Toast-Error-Border */
+  --danger-flash:       rgba(255, 107, 107, 0.42);
+
+  /* Success-Tints — derzeit nicht aktiv genutzt, aber für künftige
+   * Bestätigungs-States vorhalten (parallele Struktur zu warning/danger). */
+  --success-soft:   rgba(76, 201, 160, 0.10);
+  --success-border: rgba(76, 201, 160, 0.35);
+
+  --g-good: #6ea8fe;
+  --g-excellent: #4cc9a0;
+  --g-fail: #ff6b6b;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  /* Spacing scale (DESIGN.md §3). 6 / 10 / 14 / 20 / 32. Rhythm comes from
+   * varying step jumps; same gap everywhere = monotony. Use these wherever
+   * you'd otherwise hard-code a px value. */
+  --sp-xs: 6px;
+  --sp-sm: 10px;
+  --sp-md: 14px;
+  --sp-lg: 20px;
+  --sp-xl: 32px;
+
+  /* Brand-tinted Schatten — DESIGN.md "Tinted-Neutral Rule": reine
+   * rgba(0,0,0,X)-Schatten wirken neben Carbon-Surfaces tot. Hue 220 vom
+   * --accent-ink (#0b1220) trägt den Schatten subtil ins Cornflower-System.
+   * Alpha leicht erhöht (0.45 statt 0.35), weil tinted-dunkel weniger opak
+   * wirkt als pure black. */
+  --shadow-sm: 0 1px 2px rgba(11, 18, 32, 0.45);
+  --shadow-md: 0 6px 20px rgba(11, 18, 32, 0.45);
+
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --t-fast: 120ms;
+  --t: 180ms;
+
+  --appbar-h: 56px;
+  --bottomnav-h: 64px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  background:
+    radial-gradient(900px 500px at 100% -20%, rgba(110,168,254,0.10), transparent 60%),
+    radial-gradient(700px 400px at -10% 10%, rgba(76,201,160,0.05), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: var(--accent); text-decoration: none; }
+input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.mono { font-family: var(--font-mono); font-feature-settings: "tnum" 1; }
+
+[hidden] { display: none !important; }

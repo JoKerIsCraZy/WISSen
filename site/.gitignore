@@ -1,0 +1,30 @@
+# Astro
+.astro/
+dist/
+
+# Dependencies
+node_modules/
+
+# Local
+.env
+.env.*
+!.env.example
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Debug screenshots / visual audits (Chrome DevTools MCP, manual checks).
+.audit/
+landing-*.png
+debug-*.png
+audit-*.png
+screenshot-*.png

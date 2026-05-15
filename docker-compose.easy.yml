@@ -1,0 +1,26 @@
+# WISSen — Minimal-Setup
+# Nur die 3 Pflicht-Variablen. Rest hat sinnvolle Defaults.
+# Start: docker compose -f docker-compose.easy.yml up -d
+
+services:
+  wissen:
+    image: wissen:latest
+    build: .
+    container_name: wissen
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      # Microsoft-Login
+      MS_EMAIL: "dein.name@schule.ch"
+      MS_PASSWORD: ""
+      # API-Token — leer lassen = auto-generiert (siehe docker logs)
+      API_TOKEN: ""
+      # PUID/PGID: an die User-/Group-ID auf dem Host anpassen, der ./data besitzt.
+      # Unraid: 99/100  ·  Linux meist: 1000/1000  ·  `id -u` / `id -g` ausführen
+      PUID: "1000"
+      PGID: "1000"
+      # Zeitzone für Log- und Telegram-Zeitstempel
+      TZ: "Europe/Zurich"

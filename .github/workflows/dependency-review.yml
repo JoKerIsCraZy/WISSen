@@ -1,0 +1,44 @@
+name: Dependency Review
+
+# Blockiert PRs die neue verwundbare Dependencies einführen.
+# Komplementär zu Dependabot: Dependabot UPDATET, dies hier VERHINDERT
+# das Reinkommen schon im PR-Stage.
+#
+# Hinweis: Action funktioniert nur bei pull_request (nicht push) und
+# benötigt GitHub Advanced Security ODER ein öffentliches Repo.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dep-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
+        with:
+          # Blockiert ab HIGH (gleich wie npm audit in ci.yml)
+          fail-on-severity: high
+          # Lizenz-Compliance: blockt copyleft-Lizenzen, die für ein
+          # privates Projekt riskant sein können. Anpassen falls nötig.
+          deny-licenses: GPL-3.0, AGPL-3.0
+          comment-summary-in-pr: on-failure
+          vulnerability-check: true
+          license-check: true

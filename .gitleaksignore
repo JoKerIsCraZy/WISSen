@@ -1,0 +1,11 @@
+# Gitleaks False Positives
+#
+# Format: <commit-sha>:<datei>:<rule-id>:<zeile>
+# Gitleaks scannt den Commit-RANGE eines PRs, nicht den Endzustand — ein
+# False Positive muss daher über den Fingerprint des einführenden Commits
+# ignoriert werden, nicht durch späteres Ändern des Werts.
+
+# test/unit/pushValidate.test.js: VALID_AUTH ist ein handgeschriebener
+# Base64URL-Test-Fixture-String für den Push-Subscription-Validator, kein
+# echtes Credential. Die generic-api-key-Regel schlägt nur wegen Entropie an.
+8619592f2c1fec486cce9102b5d684b09a5ba800:test/unit/pushValidate.test.js:generic-api-key:9

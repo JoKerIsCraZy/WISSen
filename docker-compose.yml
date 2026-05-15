@@ -1,0 +1,55 @@
+# Compose-Spec ab v1.27 ignoriert `version:` — weglassen ist explizit
+# empfohlen (https://docs.docker.com/compose/compose-file/04-version-and-name/).
+
+services:
+  wissen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wissen:latest
+    container_name: wissen
+    restart: unless-stopped
+
+    # Bind to all interfaces (LAN-open)
+    # For localhost-only access, change to: "127.0.0.1:3000:3000"
+    ports:
+      - "3000:3000"
+
+    # Load environment variables from .env file
+    # .env should contain: API_TOKEN, MS_EMAIL, MS_PASSWORD, ALLOW_UI_CREDENTIALS, etc.
+    env_file:
+      - .env
+
+    # Explicit environment variables (override .env if needed)
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # PUID/PGID: match the host user that owns ./data
+      # - Unraid:        PUID=99   PGID=100
+      # - Typical Linux: PUID=1000 PGID=1000  (run `id -u` / `id -g`)
+      # - Synology:      PUID=1026 PGID=100
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      # Timezone — controls log + Telegram timestamps. Examples:
+      # Europe/Zurich, Europe/Berlin, Europe/Vienna, America/New_York
+      - TZ=${TZ:-Europe/Zurich}
+
+    # Persistent volume for SQLite DB and generated tokens
+    # data/ directory created by Dockerfile remains unchanged at startup
+    volumes:
+      - ./data:/app/data
+
+    # Container health status (used by orchestrators)
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/healthz',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+    # Playwright may need syscall access for Chromium sandbox in some environments
+    # Uncomment if you encounter Chromium sandbox errors:
+    # security_opt:
+    #   - seccomp=unconfined
+    # cap_add:
+    #   - SYS_ADMIN

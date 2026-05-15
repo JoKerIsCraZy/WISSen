@@ -1,0 +1,9 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+
+const path = Astro.url.pathname.replace(/\/+$/, '');
+const isHome = path === '' || path === '/de';
+---
+
+{!isHome && <Default {...Astro.props} />}

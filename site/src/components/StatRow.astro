@@ -1,0 +1,208 @@
+---
+type Stat = {
+  value: string;
+  label: string;
+  /** Optional numeric target for count-up animation. */
+  count?: number;
+  /** String prefix shown before the count (e.g. "<", "~"). */
+  prefix?: string;
+  /** String suffix shown after the count (e.g. "s", "MB"). */
+  suffix?: string;
+};
+
+const stats: Stat[] = [
+  { value: '< 60s', count: 60, prefix: '< ', suffix: 's', label: 'von docker pull bis Dashboard' },
+  { value: '0',     count: 0,                            label: 'externe SaaS-Abhängigkeiten' },
+  { value: '15s',   count: 15, suffix: 's',              label: 'Ø Scrape-Dauer' },
+  { value: '~50MB', count: 50, prefix: '~', suffix: 'MB', label: 'RAM im Idle' },
+];
+---
+
+<section class="tm-stats">
+  <div class="tm-stats__inner">
+    {stats.map((s) => (
+      <div class="tm-stat" data-reveal>
+        <div
+          class="tm-stat__value"
+          data-count={s.count?.toString() ?? ''}
+          data-prefix={s.prefix ?? ''}
+          data-suffix={s.suffix ?? ''}
+        >{s.value}</div>
+        <div class="tm-stat__label">{s.label}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .tm-stats {
+    padding: 0 clamp(1rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem);
+  }
+
+  .tm-stats__inner {
+    max-width: 76rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0;
+    /* Hairlines top/bottom — visible enough to anchor, quiet enough to read
+       as a band of "facts" rather than a table. */
+    border-top: 1px solid var(--sl-color-hairline);
+    border-bottom: 1px solid var(--sl-color-hairline);
+    position: relative;
+  }
+
+  /* Soft brand wash behind the band — color used semantically: these are
+     the proof numbers, so they sit on a faint indigo plate. */
+  .tm-stats__inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--tm-indigo-500) 4%, transparent),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tm-stat {
+    /* Asymmetric vertical rhythm: more breathing room above the value
+       than below, so the value reads as the answer and the label as the
+       caption — not as two equally weighted lines. */
+    padding: 1.65rem 1.25rem 1.4rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 540ms ease,
+      transform 540ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Inset hairline dividers — shorter than full height so the band
+     reads as composed, not as a spec sheet. */
+  .tm-stat + .tm-stat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 1px;
+    background: var(--sl-color-hairline);
+  }
+
+  @media (max-width: 700px) {
+    .tm-stat + .tm-stat::before {
+      left: 12%;
+      right: 12%;
+      top: 0;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+  }
+
+  .tm-stat.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tm-stat__value {
+    font-size: clamp(1.7rem, 1.2rem + 1.1vw, 2.35rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    background: linear-gradient(135deg, var(--tm-indigo-300), var(--tm-violet-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.02;
+    /* Tabular figures so the count-up doesn't jitter the layout. */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'cv11' 1;
+    /* Micro-glow that asserts the number once it lands. */
+    filter: drop-shadow(0 0 0 transparent);
+    transition: filter 800ms ease;
+  }
+  .tm-stat.is-visible .tm-stat__value {
+    filter: drop-shadow(0 0 18px color-mix(in oklab, var(--tm-indigo-500) 22%, transparent));
+  }
+  :root[data-theme='light'] .tm-stat__value {
+    background: linear-gradient(135deg, var(--tm-indigo-700), var(--tm-violet-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  :root[data-theme='light'] .tm-stat.is-visible .tm-stat__value {
+    filter: none;
+  }
+
+  .tm-stat__label {
+    margin-top: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--sl-color-gray-3);
+    line-height: 1.45;
+    letter-spacing: 0.005em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tm-stat,
+    .tm-stat__value { transition: none; }
+    .tm-stat { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  const stats = document.querySelectorAll<HTMLElement>('.tm-stat[data-reveal]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el: HTMLElement, target: number, prefix: string, suffix: string) {
+    if (reduce || target === 0) {
+      el.textContent = `${prefix}${target}${suffix}`;
+      return;
+    }
+    const duration = 1100;
+    const start = performance.now();
+    // ease-out-expo — fast burst that gracefully settles on the final value
+    const ease = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const v = Math.round(ease(t) * target);
+      el.textContent = `${prefix}${v}${suffix}`;
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e, i) => {
+          if (!e.isIntersecting) return;
+          const el = e.target as HTMLElement;
+          el.style.transitionDelay = `${i * 90}ms`;
+          el.classList.add('is-visible');
+
+          const valueEl = el.querySelector<HTMLElement>('.tm-stat__value');
+          const raw = valueEl?.dataset.count ?? '';
+          const target = raw === '' ? NaN : Number(raw);
+          if (valueEl && Number.isFinite(target)) {
+            const prefix = valueEl.dataset.prefix ?? '';
+            const suffix = valueEl.dataset.suffix ?? '';
+            // Start the count once the fade-in has visibly committed.
+            const wait = (i * 90) + (reduce ? 0 : 220);
+            window.setTimeout(() => countUp(valueEl, target, prefix, suffix), wait);
+          }
+          io.unobserve(el);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    stats.forEach((s) => io.observe(s));
+  } else {
+    stats.forEach((s) => s.classList.add('is-visible'));
+  }
+</script>

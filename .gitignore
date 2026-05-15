@@ -1,0 +1,95 @@
+# secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# runtime / generated
+data/*
+!data/README.md
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# logs / debug
+*.log
+*.png
+debug-*.png
+login-error.png
+# …aber Web-Assets (Logo, Favicons, PWA-Icons) MÜSSEN ins Repo:
+!web/assets/*.png
+!web/assets/*.ico
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# build artifacts
+dist/
+build/
+.cache/
+
+# Android companion app (lokal, nicht im Repo)
+/wissen/
+wissen-release.jks
+.playwright-mcp/
+
+# Claude Code lokaler State (kein Projektartefakt)
+.claude/
+claude_docs/
+
+# Raumplan-Editor (lokales Tool, persönliche Floorplan-Bearbeitung)
+raumpläne/
+
+# Design-Prototypen (Explorationen, nicht produktiv)
+prototypes/
+
+# Session-Notes (lokal, nicht committed)
+SESSION_RESUME.md
+
+# Auto-generierte Doku (z.B. Mermaid ERD aus dem DB-Schema). Quelle ist
+# src/db/schema.js — die docs sind regenerierbar und sollen nicht im Repo
+# driften.
+docs/db-schema.md
+
+# SvelteKit frontend (web-svelte/) build artefacts
+web-svelte/node_modules/
+web-svelte/.svelte-kit/
+web-svelte/build/
+web-svelte/.vite/
+web-svelte/dist/
+# Vite writes timestamp-suffixed config dumps next to vite.config when
+# HMR reloads the config. They're transient and noisy in diffs.
+web-svelte/vite.config.ts.timestamp-*
+web-svelte/vite.config.js.timestamp-*
+
+# TypeScript incremental build cache (per-package). Regenerated on every
+# `tsc --build`; never useful in a diff.
+*.tsbuildinfo
+
+# Coverage reports (test:coverage etc., when added)
+coverage/
+*.lcov
+
+# Local docker-compose overrides — kept out of the repo so each operator
+# can pin volumes / ports / env without conflicting with shared defaults.
+docker-compose.override.yml
+
+# OS / tooling crud
+.npm/
+.pnpm-store/
+.yarn/
+
+# Misc editor / runtime artefacts
+*.tmp
+*.bak

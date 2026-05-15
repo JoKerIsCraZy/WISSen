@@ -1,0 +1,31 @@
+---
+title: Live Demo
+description: Klick dich durch die Mobile-PWA — komplette App mit Mock-Daten direkt im Browser.
+---
+
+import LiveDemoPhone from '../../../components/LiveDemoPhone.astro';
+
+Die **Live Demo** ist die echte WISSen Mobile-PWA, die direkt hier im Browser läuft — mit gemockten Beispieldaten statt deinen echten Schul-Infos. Du kannst alles antippen, scrollen und ausprobieren, ohne irgendwas installieren zu müssen.
+
+## Was du ausprobieren kannst
+
+- **Aktuell-Tab** — die Now-Card mit der laufenden Lektion, dem Inline-Raumplan (Floor-Highlighting), Tile-Stack mit "Nächste Lektion" und der Letzte-Änderung-Liste.
+- **Noten-Tab** — alle Module mit Filter-Chips ("Tiefste / Höchste / Nur benotete"), Suche per Modul-Nummer oder Fach-Name, und Hero-Card mit Durchschnitt + Semester-Schnitten.
+- **Modul-Detail** — tippe auf eine Note, dann öffnet sich das Modul-Sheet mit allen Zwischenprüfungen (ZP) und Lernbeurteilungen (LB), Gewichtungen und der berechneten Modulnote.
+- **Plan-Tab** — der ganze Stundenplan über mehrere Tage gruppiert, inklusive Raumwechseln (W412 → W215) und Online-Lektionen.
+- **Settings-Tab** — Scheduler-Konfiguration, Microsoft-SSO-Felder, Push-Setup. Änderungen werden in der Demo akzeptiert, aber nicht persistiert.
+- **Letzte-Änderung-Dropdown** — auf der Aktuell-Seite ausklappen, dann eine frische Note nach links wischen → das Item verschwindet (nur in der Demo-Session).
+
+## Hinweise
+
+- Alle Zahlen, Module, Räume und Lehrer-Namen sind **frei erfunden**.
+- Die Push-Notifications und der Service-Worker sind in der Demo deaktiviert — sie würden sonst mit dem Docs-Site-Service-Worker kollidieren.
+- Möchtest du die echte App mit deinen WISS-Daten? → [Quick Start (Docker)](/start/quick-start/) in unter 2 Minuten.
+
+<LiveDemoPhone id="demo" showCopy={false} />
+
+## Wie geht's weiter?
+
+- [Quick Start (Docker)](/start/quick-start/) — die App in 2 Minuten zum Laufen bringen.
+- [Mobile-App-Doku](/features/mobile-pwa/) — wie du die PWA auf iOS und Android installierst.
+- [Push einrichten](/features/push/) — VAPID-Keys generieren und Web-Push aktivieren.
