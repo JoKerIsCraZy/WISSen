@@ -1,0 +1,1388 @@
+/* ============================================================
+   WISSen — View-specific styles
+   Hero / Stats / Pruefung / Filters / Plan / Form / Buttons /
+   Scrape-card / Mode-switch / Day-chips / Range / Time inputs /
+   Now-card / Now-tile.
+   ============================================================ */
+
+/* ============================================================
+   Hero / Average — flat type-driven hierarchy.
+   No gradient container, no "hero-metric" SaaS template (DESIGN.md ban).
+   The big mono number does the heavy lifting; meta sits to its right
+   as small tabular text. Bottom rule provides separation from the list.
+   ============================================================ */
+.m-hero {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 4px 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.m-hero__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.m-hero__value {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.m-hero__meta {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-mute);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+.m-hero__metarow { white-space: nowrap; }
+.m-hero__meta strong { color: var(--text); font-size: 14px; font-weight: 600; }
+
+/* Modul-Detail two-stat header — same flat philosophy as m-hero. No
+ * gradient container (was nested-card inside the sheet body), no border;
+ * each stat sits in its own column, separated by a vertical hairline. */
+.m-modul-statline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 8px 0 18px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.m-stat {
+  text-align: center;
+  padding: 4px 0;
+}
+.m-stat + .m-stat {
+  border-left: 1px solid var(--border-soft);
+}
+.m-stat__value {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.m-stat__label {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Pruefung row inside detail */
+.m-pruefung {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+.m-pruefung__tag {
+  flex-shrink: 0;
+  width: 44px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.m-pruefung__body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================================
+   Filter bar (Noten)
+   ============================================================ */
+.m-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  margin-bottom: 14px;
+}
+.m-filter:first-child { margin-top: 0; }
+.m-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.m-search svg {
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+  color: var(--text-dim);
+}
+.m-search input {
+  width: 100%;
+  padding: 12px 12px 12px 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  color: var(--text);
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.m-search input::placeholder { color: var(--text-dim); }
+.m-search input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-elev);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.m-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -14px;
+  padding: 0 14px 2px;
+  scroll-snap-type: x proximity;
+}
+.m-chips::-webkit-scrollbar { display: none; }
+.m-chip {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-mute);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  scroll-snap-align: start;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-chip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+.m-chip:active { background: var(--surface-2); }
+
+/* ============================================================
+   Stundenplan rows
+   ============================================================ */
+/* Plan-card overrides .m-card's horizontal flex so the trigger + detail
+   panel stack vertically (detail goes BELOW the row, not next to it). */
+.m-plan-card {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Plan card is a <button> so the entire row is one tap target. */
+.m-plan {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px 14px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease);
+}
+.m-plan:active { background: var(--surface-2); }
+.m-plan-card.is-open .m-plan { background: var(--surface-2); }
+/* Bei frischen Cards den Trigger-Background NIE mit surface-2 überschreiben
+ * — sonst flackert beim Öffnen UND beim Tap-zum-Schließen der gelbe
+ * is-fresh-Gradient kurz weg (touch-down setzt surface-2, release stellt
+ * transparent wieder her). Transparent durch alle States hält den Parent-
+ * Gradient durchgehend sichtbar; das Click-Feedback kommt vom scale auf
+ * .m-card.is-clickable:active und vom Chev-Rotate beim Toggle. */
+.m-plan-card.is-fresh .m-plan:active,
+.m-plan-card.is-fresh.is-open .m-plan { background: transparent; }
+
+.m-plan__time {
+  flex-shrink: 0;
+  width: 56px;
+  font-variant-numeric: tabular-nums;
+}
+.m-plan__from { font-weight: 600; font-size: 14px; }
+.m-plan__to { font-size: 12px; color: var(--text-mute); }
+.m-plan__divider {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.55;
+}
+.m-plan__main { flex: 1; min-width: 0; }
+.m-plan__name {
+  font-weight: 600;
+  font-size: 14.5px;
+  line-height: 1.3;
+}
+.m-plan__sub { margin-top: 2px; font-size: 12px; color: var(--text-mute); }
+.m-plan__chev {
+  flex-shrink: 0;
+  align-self: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-dim);
+  transition: transform var(--t) var(--ease);
+}
+.m-plan-card.is-open .m-plan__chev { transform: rotate(180deg); }
+
+/* Detail panel (dropdown — slides under the row, contains floor plan + chips) */
+.m-plan__detail {
+  padding: 8px 14px 14px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: m-plan-detail-fade 200ms var(--ease);
+}
+/* Floor-plan in dropdown — full natural aspect (matches V2 mobile look).
+   Custom caption rendered ABOVE the plan, RaumView's internal caption is
+   hidden so we control the layout from the parent JS. */
+.m-plan__floor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.m-plan__floor-caption {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* align-self: center → Etagen-/Zimmer-Pille mittig in der Spalte
+   * über dem Floor-Plan. Vorher flex-start (links angeknallt) wirkte
+   * unbalanciert weil das Floor-Plan-Image darunter naturally
+   * zentriert ist. */
+  align-self: center;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  font-size: 11px;
+}
+.m-plan__floor-tag {
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.m-plan__floor-room {
+  color: var(--text);
+  font-weight: 600;
+}
+.m-plan__floor .raumview { margin: 0; gap: 0; }
+.m-plan__floor .raumview__stage {
+  border-radius: 12px;
+  width: 100%;
+}
+.m-plan__floor .raumview__caption { display: none; }
+
+/* Definition-list inside plan-card dropdown — mirrors Nächste-Lektion's
+   m-now-tile__dl so both detail panels share one shape. */
+.m-plan__dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.m-plan__dl dt {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10.5px;
+  align-self: center;
+}
+.m-plan__dl dd {
+  margin: 0;
+  color: var(--text);
+}
+
+@keyframes m-plan-detail-fade {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Bottom-sheet popup (Modul-Detail)
+   Slides up from bottom with a dimmed backdrop. Locks body scroll while
+   open. Drag-handle is decorative for now (visual affordance only).
+   ============================================================ */
+.m-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: sheetBackdropIn 200ms var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.m-sheet-overlay.is-closing {
+  animation: sheetBackdropOut 200ms var(--ease) forwards;
+  /* Während des Schließens keine Taps mehr abfangen — sonst frisst das
+   * (noch im DOM, aber visuell ausfadende) Overlay den ersten Tap auf
+   * eine andere Note nach drag-dismiss / Close-Button.
+   *
+   * pointer-events: none kaskadiert NICHT (W3C-Spec): jeder Child mit
+   * default `auto` bleibt hit-testbar. Die .m-sheet drinnen deckt
+   * während der 220ms Slide-Out-Animation noch sichtbar einen großen
+   * Teil des Viewports und würde den ersten Tap auf eine andere Note
+   * verschlucken. Deshalb explizit auch auf alle Descendants — sonst
+   * brauchte der User 2 Taps (oder 1 Scroll + 1 Tap) nach jedem
+   * Drag-Dismiss. */
+  pointer-events: none;
+}
+.m-sheet-overlay.is-closing * {
+  pointer-events: none;
+}
+@keyframes sheetBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes sheetBackdropOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.m-sheet {
+  width: 100%;
+  max-width: 720px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--surface), var(--bg-elev));
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border: 1px solid var(--border-soft);
+  border-bottom: 0;
+  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.5);
+  animation: sheetIn 280ms var(--ease);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.m-sheet-overlay.is-closing .m-sheet {
+  animation: sheetOut 220ms var(--ease) forwards;
+}
+@keyframes sheetIn {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes sheetOut {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+.m-sheet__head {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  /* Top padding accommodates the absolutely-positioned drag handle; grid
+   * children align without ad-hoc margin-tops. */
+  padding: 18px 12px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-shrink: 0;
+  /* Drag-Affordance auf Desktop. touch-action: none unterdrückt das Browser-
+   * eigene Scroll-Gesture-Highjacking auf der Header-Area, damit unsere
+   * pointer-handler die DOWN-Geste komplett behalten. Body bleibt scrollbar. */
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.m-sheet__head:active { cursor: grabbing; }
+.m-sheet__handle {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
+  /* Animation auf transform statt width: läuft auf dem Compositor (GPU),
+   * kein Layout-Reflow pro Frame. Die Default-Regel oben hat bereits
+   * transform: translateX(-50%) für die horizontale Zentrierung — der
+   * :active-Override unten muss BEIDE Transforms (translate + scale)
+   * zusammen angeben, weil eine zweite transform-Deklaration die
+   * vorherige komplett ersetzt. */
+  transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+/* Visuelles Feedback wenn der User die Header-Area aktiv anfasst — ein
+ * minimaler Hint dass die Drag-Geste angenommen wurde. scaleX(1.22) ≈
+ * 44/36 (Original-Breite war 36px, Target 44px), aber rein als
+ * Compositor-Transform ohne Layout-Reflow. */
+.m-sheet__head:active .m-sheet__handle {
+  background: var(--text-mute);
+  transform: translateX(-50%) scaleX(1.22);
+}
+.m-sheet__title {
+  margin: 0;
+  grid-column: 2;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-sheet__close {
+  grid-column: 3;
+  /* 44px touch-target. The icon inside (22x22) keeps the visual weight. */
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--text-mute);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.m-sheet__close:active {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.m-sheet__body {
+  padding: 16px 14px calc(20px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.m-sheet__body .m-modul-statline {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-sheet-overlay,
+  .m-sheet,
+  .m-sheet-overlay.is-closing,
+  .m-sheet-overlay.is-closing .m-sheet {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-plan__detail { animation: none; }
+  .m-plan__chev { transition: none; }
+}
+
+/* ============================================================
+   Settings form
+   ============================================================ */
+.m-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.m-fieldset {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Wichtig: kein min-inline-size:auto — sonst overflow auf kleinen Screens */
+  min-inline-size: 0;
+}
+.m-fieldset > legend {
+  /* Native <legend> wird vom Browser in die Top-Border des <fieldset>
+     eingebettet — sieht häßlich aus. float+width=100% nimmt sie aus
+     diesem Spezial-Layout raus und macht sie zu einem normalen Block. */
+  float: left;
+  width: 100%;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  padding: 0 0 10px;
+  margin: 0 0 6px;
+  border-bottom: 1px solid var(--border-soft);
+  font-weight: 700;
+}
+.m-field { display: flex; flex-direction: column; gap: 6px; }
+.m-field > span { font-size: 13px; color: var(--text-mute); font-weight: 500; }
+
+/* ============================================================
+   Release-Update Modal (GitHub-Upstream-Check)
+   Modal-Popup das max 1× pro Release-Tag erscheint wenn eine neuere
+   Version auf GitHub veröffentlicht ist. Tag-Dismiss in localStorage.
+   ============================================================ */
+.m-release-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: m-release-backdrop-in 200ms var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.m-release-overlay.is-closing {
+  animation: m-release-backdrop-out 220ms var(--ease) forwards;
+  pointer-events: none;
+}
+@keyframes m-release-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-release-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+
+.m-release {
+  width: min(440px, 100%);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--surface), var(--bg-elev));
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: m-release-in 280ms var(--ease);
+}
+.m-release-overlay.is-closing .m-release {
+  animation: m-release-out 220ms var(--ease) forwards;
+}
+@keyframes m-release-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes m-release-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+
+.m-release__head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.m-release__icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.m-release__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.m-release__close {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--text-mute);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.m-release__close:active,
+.m-release__close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.m-release__body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.m-release__versions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+.m-release__version-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+}
+.m-release__version-row span {
+  color: var(--text-mute);
+}
+.m-release__version-row strong {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-weight: 600;
+  color: var(--text);
+}
+.m-release__version-row--new strong {
+  color: var(--accent);
+}
+
+.m-release__release-name {
+  margin: 16px 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.m-release__published {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--text-mute);
+}
+.m-release__notes {
+  margin-top: 16px;
+}
+.m-release__notes-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.m-release__notes-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--surface-3, var(--bg-elev));
+  padding: 12px 14px;
+  border-radius: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  word-break: break-word;
+  margin: 0;
+}
+/* Raw-Fallback (kein marked-Output) — pre-style. */
+.m-release__notes-body--raw {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+/* Rendered Markdown — typografisch sauber. Headings tighter als default,
+ * Code-Blocks im Surface-Hierarchie-Stil, Listen ohne überzogene Einrückung. */
+.m-release__notes-body--rendered { /* nutzt body-Defaults oben */ }
+.m-release__notes-body--rendered > :first-child { margin-top: 0; }
+.m-release__notes-body--rendered > :last-child  { margin-bottom: 0; }
+.m-release__notes-body--rendered h1,
+.m-release__notes-body--rendered h2,
+.m-release__notes-body--rendered h3,
+.m-release__notes-body--rendered h4 {
+  margin: 14px 0 6px;
+  line-height: 1.25;
+  color: var(--text);
+  font-weight: 700;
+}
+.m-release__notes-body--rendered h1 { font-size: 16px; }
+.m-release__notes-body--rendered h2 { font-size: 15px; }
+.m-release__notes-body--rendered h3 { font-size: 14px; }
+.m-release__notes-body--rendered h4 { font-size: 13px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.04em; }
+.m-release__notes-body--rendered p {
+  margin: 6px 0;
+}
+.m-release__notes-body--rendered ul,
+.m-release__notes-body--rendered ol {
+  margin: 6px 0;
+  padding-left: 22px;
+}
+.m-release__notes-body--rendered li { margin: 2px 0; }
+.m-release__notes-body--rendered li > p { margin: 0; }
+.m-release__notes-body--rendered a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+}
+.m-release__notes-body--rendered a:active,
+.m-release__notes-body--rendered a:hover {
+  border-bottom-color: var(--accent);
+}
+.m-release__notes-body--rendered code {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.9em;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.m-release__notes-body--rendered pre {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  padding: 10px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.m-release__notes-body--rendered pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+.m-release__notes-body--rendered blockquote {
+  margin: 8px 0;
+  padding: 4px 12px;
+  border-left: 3px solid var(--border);
+  color: var(--text-mute);
+}
+.m-release__notes-body--rendered hr {
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  margin: 12px 0;
+}
+.m-release__notes-body--rendered strong { font-weight: 700; color: var(--text); }
+.m-release__notes-body--rendered em { font-style: italic; }
+.m-release__notes-body--rendered img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.m-release__foot {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-soft);
+}
+.m-release__btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-release__btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink, #0b1220);
+}
+.m-release__btn--primary:active,
+.m-release__btn--primary:hover {
+  background: var(--accent-hover, var(--accent));
+}
+.m-release__btn--ghost {
+  background: transparent;
+  border-color: var(--border-soft);
+  color: var(--text-mute);
+}
+.m-release__btn--ghost:active,
+.m-release__btn--ghost:hover {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-release-overlay,
+  .m-release-overlay.is-closing,
+  .m-release,
+  .m-release-overlay.is-closing .m-release {
+    animation: none;
+  }
+}
+
+/* "Über"-Fieldset: Label links, Version-Wert rechts, monospace.
+ * Reine Read-Only-Info, daher tabellarisch statt Form-Field-Look. */
+.m-version-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+.m-version-row__label {
+  color: var(--text-mute);
+}
+.m-version-row__value {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.m-version-row__link {
+  text-decoration: none;
+  color: var(--accent);
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+}
+.m-version-row__link:hover,
+.m-version-row__link:focus-visible {
+  text-decoration: underline;
+  outline-offset: 2px;
+}
+/* "Update pending" Indikator: stale Cache-Version wird gelb hervorgehoben
+ * damit der User direkt sieht dass eine neue SW-Generation am Server
+ * vorhanden ist die noch nicht aktiviert wurde. */
+.m-version-row__value--stale {
+  color: var(--warning);
+}
+.m-field input[type="text"],
+.m-field input[type="email"],
+.m-field input[type="password"],
+.m-field input[type="url"],
+.m-field input[type="number"],
+.m-field input[type="time"],
+.m-field select,
+.m-field textarea {
+  padding: 11px 12px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.m-field input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.m-field__hint { font-size: 11px; color: var(--text-dim); }
+
+/* Push-Settings — diag block + status line. Lifted out of inline styles
+ * so theming runs through tokens, not JS string concatenation. */
+.m-push-diag {
+  font-size: 12px;
+  line-height: 1.6;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+  color: var(--text-dim);
+}
+.m-push-status {
+  font-size: 13px;
+  color: var(--text-mute);
+  margin-top: 12px;
+}
+.m-push-status[data-state="ok"]    { color: var(--success); }
+.m-push-status[data-state="err"]   { color: var(--danger); }
+.m-push-status[data-state="info"]  { color: var(--text); }
+.m-push-icon { font-size: 14px; }
+
+.m-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+.m-toggle__label { font-size: 14px; }
+.m-switch {
+  position: relative;
+  width: 44px; height: 26px;
+  background: var(--surface-3);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-switch::before {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--text-mute);
+  transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+input[type="checkbox"]:checked + .m-switch { background: var(--accent); border-color: var(--accent); }
+input[type="checkbox"]:checked + .m-switch::before { transform: translateX(18px); background: var(--accent-ink); }
+/* Visuell versteckt, aber tab-erreichbar — pointer-events: none entfernt
+ * damit Keyboard-User die Checkbox fokussieren und mit Space toggeln können.
+ * position+opacity:0 reicht für die visuelle Ausblendung; der parent-Label
+ * stellt die sichtbare Switch-Rendering bereit. */
+.m-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  /* Größe matcht den .m-switch damit der Klick-/Tap-Hit auf die richtige
+   * Region läuft, falls jemand mit der Maus direkt auf die Switch zielt. */
+  width: 44px;
+  height: 26px;
+  margin: 0;
+}
+/* Focus-Ring auf dem Switch-Pseudo, da das echte Input visuell versteckt
+ * ist. :has() wird von allen mobile-relevanten Browsern (iOS 16.4+,
+ * Chrome 105+) unterstützt; auf älteren fallt der Ring zurück auf
+ * Browser-Default am echten Input (kein Showstopper). */
+.m-toggle:has(input[type="checkbox"]:focus-visible) .m-switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.m-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+.m-btn:active { transform: scale(.98); }
+.m-btn:disabled { opacity: .55; }
+.m-btn--primary {
+  /* Solid accent — DESIGN.md §5: "Primary: Cornflower Beam Hintergrund".
+   * No vertical gradient, no inset gloss highlight. */
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+.m-btn--block { width: 100%; }
+/* Vertical gap above a button when stacking after a related control or
+ * fieldset (replaces inline margin-top usage from JS). */
+.m-btn--gap { margin-top: var(--sp-xs); }
+
+/* Loading-state for buttons. Spinner sits in the icon slot via
+ * `<span class="m-btn__spinner">`, hidden by default, shown when
+ * .is-loading is on the button. Label gets dimmed but stays so the button
+ * doesn't change width during the in-flight state. */
+.m-btn__spinner {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: spin 0.8s linear infinite;
+}
+.m-btn.is-loading .m-btn__spinner { display: inline-block; }
+.m-btn.is-loading .m-btn__label   { opacity: 0.55; }
+@media (prefers-reduced-motion: reduce) {
+  .m-btn__spinner { animation: none; }
+}
+.m-btn--danger {
+  background: rgba(255,107,107,.10);
+  border-color: rgba(255,107,107,.35);
+  color: var(--danger);
+}
+
+/* ============================================================
+   Settings — Scrape Status Card
+   ============================================================ */
+.m-scrape {
+  background: linear-gradient(180deg, var(--surface), var(--surface-press-bg));
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.m-scrape__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.m-scrape__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-scrape__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+.m-scrape__pill--idle    { color: var(--text-mute); }
+.m-scrape__pill--running { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+.m-scrape__pill--running .m-scrape__dot {
+  background: var(--accent);
+  position: relative;
+}
+/* GPU-cheap pulse: scale a pseudo-element + fade opacity. Avoids the
+ * per-frame repaint cost of animating box-shadow's spread radius. */
+.m-scrape__pill--running .m-scrape__dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  transform-origin: center;
+  animation: m-pulse 1.6s var(--ease) infinite;
+  pointer-events: none;
+}
+.m-scrape__pill--error   { color: var(--danger); border-color: rgba(255,107,107,.4); background: rgba(255,107,107,.10); }
+.m-scrape__pill--error .m-scrape__dot { background: var(--danger); }
+@keyframes m-pulse {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(2.6); opacity: 0;    }
+  100% { transform: scale(2.6); opacity: 0;    }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m-scrape__pill--running .m-scrape__dot::after { animation: none; opacity: 0; }
+}
+.m-scrape__lastrun {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+/* Option-Reihe in der Scrape-Card (Toggle "Alle Moduldetails mitscrapen").
+ * border-top trennt die persistente Einstellung sichtbar vom Action-Button. */
+.m-scrape__opt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.m-scrape__opt .m-toggle { padding: 0; }
+.m-scrape__opt-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.m-scrape__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-radius: var(--r-md);
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-sm);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+.m-scrape__btn:active { transform: scale(.98); }
+.m-scrape__btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+.m-scrape__btn .m-spinner-sm {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(10,16,32,.25);
+  border-top-color: rgba(10,16,32,.85);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Phase steps — Spaltenzahl matcht PHASE_ORDER.length (5), wird in
+ * renderScrapeCard zusätzlich per JS aus PHASE_ORDER gesetzt, damit
+ * CSS und Phasenliste nicht erneut auseinanderdriften. */
+.m-scrape__steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.m-scrape__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1.2;
+}
+.m-scrape__step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  transition: background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.m-scrape__step.is-done .m-scrape__step-dot {
+  background: var(--success);
+}
+.m-scrape__step.is-done {
+  color: var(--text-mute);
+}
+.m-scrape__step.is-active .m-scrape__step-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(110,168,254,.18);
+}
+.m-scrape__step.is-active {
+  color: var(--accent);
+}
+
+/* Progress fill bar */
+.m-scrape__bar {
+  position: relative;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.m-scrape__bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  /* Statt width-Animation: Bar ist immer auf voller Breite (100 %) und
+   * wird per scaleX gestaucht. transform-origin: left hält den linken
+   * Rand fix, scaleX(0) ist der Initial-State (0 % gefüllt), scaleX(1)
+   * entspricht 100 %. transform läuft auf dem Compositor (GPU), kein
+   * Layout-Reflow pro Frame. JS setzt fill.style.transform = scaleX(pct/100). */
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 999px;
+  transition: transform var(--t) var(--ease);
+}
+
+.m-scrape__caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.m-scrape__error {
+  font-size: 12px;
+  color: var(--danger);
+  background: rgba(255,107,107,.08);
+  border: 1px solid rgba(255,107,107,.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: -4px;
+}
+
+/* ============================================================
+   Settings — Mode-Switch (Radio)
+   ============================================================ */
+.m-modeswitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 4px;
+}
+.m-modeswitch__opt {
+  position: relative;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.m-modeswitch__opt input {
+  position: absolute;
+  opacity: 0; pointer-events: none;
+}
+.m-modeswitch__opt span {
+  display: block;
+  padding: 9px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mute);
+  border-radius: calc(var(--r-md) - 2px);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.m-modeswitch__opt input:checked + span {
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent-border);
+}
+
+/* Day-Chips (Mo–So) */
+.m-daychips {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.m-daychip {
+  padding: 10px 0;
+  border-radius: var(--r-md);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  color: var(--text-mute);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-daychip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+.m-daychip:active { background: var(--surface-2); }
+
+/* Range slider */
+.m-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  outline: none;
+  margin: 4px 0;
+}
+.m-range:focus-visible {
+  /* Halo around the track when focused via keyboard — matches the search
+   * input's focus state so the visual language stays consistent. */
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.m-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 2px 8px rgba(110, 168, 254, .45), 0 0 0 4px var(--accent-soft);
+}
+.m-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 2px 8px rgba(110, 168, 254, .45), 0 0 0 4px var(--accent-soft);
+}
+.m-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(110,168,254,.45);
+  transition: transform var(--t-fast) var(--ease);
+}
+.m-range::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(110,168,254,.45);
+  transition: transform var(--t-fast) var(--ease);
+}
+/* Tactile dragging feedback — the thumb grows slightly while the user
+ * holds it, which matches the input-feedback rules elsewhere in /mobile/. */
+.m-range:active::-webkit-slider-thumb { transform: scale(1.15); }
+.m-range:active::-moz-range-thumb     { transform: scale(1.15); }
+@media (prefers-reduced-motion: reduce) {
+  .m-range::-webkit-slider-thumb,
+  .m-range::-moz-range-thumb { transition: none; }
+}
+.m-rangescale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+
+/* Time-range (interval mode "von – bis") */
+.m-timerange {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.m-timerange input[type="time"] {
+  flex: 1;
+  padding: 11px 12px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.m-timerange__sep {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* Time-list (weekly mode) */
+.m-timelist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.m-timelist__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.m-timelist__row input[type="time"] {
+  flex: 1;
+  padding: 11px 12px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.m-timelist__del {
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--danger);
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.m-timelist__del:active { background: var(--surface-3); }
+
+.m-mode-panel { display: contents; }
+
+/* Aktuell view (.m-now-card / .m-now-tile family) lives in css/now.css. */

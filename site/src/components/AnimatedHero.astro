@@ -1,0 +1,457 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// Resolve current release version at build time so the hero pill never
+// drifts behind a release. Order: explicit env (set by CI from the release
+// tag) → latest git tag (local dev) → root package.json (source tarballs).
+function resolveVersion(): string {
+  const fromEnv = process.env.SITE_VERSION?.trim();
+  if (fromEnv) return fromEnv.replace(/^v/, '');
+
+  try {
+    const tag = execSync('git describe --tags --abbrev=0', {
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .toString()
+      .trim();
+    if (tag) return tag.replace(/^v/, '');
+  } catch {
+    /* no git or no tags — fall through */
+  }
+
+  try {
+    const pkgUrl = new URL('../../../package.json', import.meta.url);
+    const pkg = JSON.parse(readFileSync(fileURLToPath(pkgUrl), 'utf8'));
+    if (pkg?.version) return String(pkg.version);
+  } catch {
+    /* no root package.json reachable */
+  }
+
+  return '1.0.0';
+}
+
+const version = resolveVersion();
+---
+
+<section class="tm-hero">
+  <div class="tm-hero__bg" aria-hidden="true">
+    <div class="tm-hero__grid"></div>
+    <div class="tm-hero__orb tm-hero__orb--a"></div>
+    <div class="tm-hero__orb tm-hero__orb--b"></div>
+    <div class="tm-hero__orb tm-hero__orb--c"></div>
+  </div>
+
+  <div class="tm-hero__inner">
+    <div class="tm-hero__logo-wrap">
+      <Image src={logo} alt="WISSen Logo" width={96} height={96} loading="eager" class="tm-hero__logo" />
+      <span class="tm-hero__pill">v{version} · stable · self-hosted</span>
+    </div>
+
+    <h1 class="tm-hero__title">
+      <span class="tm-hero__title-row">Deine WISS-Noten,</span>
+      <span class="tm-hero__title-row tm-hero__title-row--accent">live auf deinem Handy.</span>
+    </h1>
+
+    <p class="tm-hero__tagline">
+      Inoffizieller Scraper für das WISS Tocco-Schulportal — Noten, Stundenplan,
+      installierbare PWA, Telegram-Bot und Push-Benachrichtigungen aus einem Guss.
+      Self-hosted in einem Docker-Container.
+    </p>
+
+    <div class="tm-hero__cta">
+      <a href="/start/quick-start/" class="tm-btn tm-btn--primary">
+        Quick Start
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+      <a href="#demo" class="tm-btn tm-btn--ghost tm-btn--demo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        Live Demo
+      </a>
+      <a href="/start/uebersicht/" class="tm-btn tm-btn--ghost">Was kann es?</a>
+      <a href="https://github.com/JoKerIsCraZy/wissen" class="tm-btn tm-btn--quiet" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.18c-3.2.7-3.87-1.37-3.87-1.37-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.94 10.94 0 0 1 5.74 0c2.18-1.49 3.14-1.18 3.14-1.18.63 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+
+    <div class="tm-hero__terminal" role="presentation">
+      <div class="tm-hero__terminal-bar">
+        <span class="tm-hero__dot tm-hero__dot--r"></span>
+        <span class="tm-hero__dot tm-hero__dot--y"></span>
+        <span class="tm-hero__dot tm-hero__dot--g"></span>
+        <span class="tm-hero__terminal-title">~/wissen</span>
+      </div>
+      <pre class="tm-hero__terminal-body"><code><span class="tm-c--mute">$</span> docker run -d --name wissen -p 3000:3000 \
+  -e <span class="tm-c--key">MS_EMAIL</span>=<span class="tm-c--str">"name@schule.ch"</span> \
+  -e <span class="tm-c--key">MS_PASSWORD</span>=<span class="tm-c--str">"***"</span> \
+  -v <span class="tm-c--str">"$(pwd)/data:/app/data"</span> \
+  ghcr.io/jokeriscrazy/wissen:latest
+
+<span class="tm-c--ok">✓</span> Container started · API on <span class="tm-c--accent">:3000</span>
+<span class="tm-c--ok">✓</span> Auto-generated token: <span class="tm-c--mute">tk_•••••••</span>
+<span class="tm-c--ok">✓</span> Scheduler running · next scrape in 30 min
+<span class="tm-c--cursor">▊</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tm-hero {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(2rem, 3vw + 0.5rem, 4rem) clamp(1rem, 4vw, 2.5rem) clamp(3rem, 5vw, 6rem);
+    overflow: hidden;
+    margin-top: 0;
+  }
+
+  /* ---------- Background layers ---------- */
+  .tm-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .tm-hero__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 30%, transparent 80%);
+  }
+
+  :root[data-theme='light'] .tm-hero__grid {
+    background-image:
+      linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+  }
+
+  .tm-hero__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+
+  .tm-hero__orb--a {
+    width: 540px; height: 540px;
+    top: -200px; left: -120px;
+    background: radial-gradient(circle, var(--tm-indigo-500), transparent 65%);
+    animation: tm-orbA 18s ease-in-out infinite alternate;
+  }
+
+  .tm-hero__orb--b {
+    width: 460px; height: 460px;
+    top: 40px; right: -140px;
+    background: radial-gradient(circle, var(--tm-violet-500), transparent 65%);
+    animation: tm-orbB 22s ease-in-out infinite alternate;
+  }
+
+  .tm-hero__orb--c {
+    width: 380px; height: 380px;
+    bottom: -180px; left: 35%;
+    background: radial-gradient(circle, #38bdf8, transparent 65%);
+    opacity: 0.32;
+    animation: tm-orbC 26s ease-in-out infinite alternate;
+  }
+
+  @keyframes tm-orbA {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(40px, 30px, 0) scale(1.08); }
+  }
+  @keyframes tm-orbB {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(-50px, 40px, 0) scale(0.95); }
+  }
+  @keyframes tm-orbC {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(60px, -30px, 0) scale(1.1); }
+  }
+
+  /* ---------- Inner ---------- */
+  .tm-hero__inner {
+    max-width: 64rem;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .tm-hero__logo-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    animation: tm-fade 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .tm-hero__logo {
+    border-radius: 22%;
+    filter: drop-shadow(0 12px 36px color-mix(in oklab, var(--tm-indigo-500) 50%, transparent));
+    animation: tm-logoFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes tm-logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  .tm-hero__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    font-family: var(--sl-font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--tm-indigo-300);
+    background: color-mix(in oklab, var(--tm-indigo-500) 12%, transparent);
+    border: 1px solid color-mix(in oklab, var(--tm-indigo-500) 30%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  :root[data-theme='light'] .tm-hero__pill {
+    color: var(--tm-indigo-700);
+    background: color-mix(in oklab, var(--tm-indigo-500) 8%, transparent);
+  }
+
+  .tm-hero__title {
+    font-size: clamp(2.4rem, 1.5rem + 4vw, 5rem);
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin: 0;
+    animation: tm-rise 800ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both;
+  }
+
+  .tm-hero__title-row {
+    display: block;
+  }
+
+  .tm-hero__title-row--accent {
+    background: linear-gradient(110deg,
+      var(--tm-indigo-400) 0%,
+      var(--tm-violet-400) 45%,
+      #38bdf8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: tm-shine 8s linear infinite;
+  }
+
+  @keyframes tm-shine {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .tm-hero__tagline {
+    max-width: 44rem;
+    font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    animation: tm-rise 800ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+  }
+
+  .tm-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    animation: tm-rise 800ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+  }
+
+  .tm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.15rem;
+    border-radius: 0.7rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    transition:
+      transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 220ms ease,
+      background 220ms ease,
+      border-color 220ms ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .tm-btn:hover { transform: translateY(-1px); }
+
+  .tm-btn--primary {
+    color: white;
+    background: linear-gradient(135deg, var(--tm-indigo-600), var(--tm-violet-600));
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+      0 8px 24px -8px color-mix(in oklab, var(--tm-indigo-600) 60%, transparent);
+  }
+  .tm-btn--primary:hover {
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.22) inset,
+      0 14px 32px -8px color-mix(in oklab, var(--tm-indigo-600) 70%, transparent);
+  }
+
+  .tm-btn--ghost {
+    color: var(--sl-color-white);
+    background: color-mix(in oklab, var(--sl-color-white) 8%, transparent);
+    border-color: color-mix(in oklab, var(--sl-color-white) 14%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  .tm-btn--ghost:hover {
+    background: color-mix(in oklab, var(--sl-color-white) 12%, transparent);
+    border-color: color-mix(in oklab, var(--sl-color-white) 22%, transparent);
+  }
+
+  :root[data-theme='light'] .tm-btn--ghost {
+    color: var(--tm-indigo-800);
+    background: rgba(255, 255, 255, 0.6);
+    border-color: var(--tm-indigo-200);
+  }
+
+  /* "Live Demo"-Variante des Ghost-Buttons: leichter Violet-Tint damit
+   * das CTA neben "Quick Start" nicht in der Visual-Hierarchy verschwindet
+   * — aber subtil genug um den Primary-Button nicht zu konkurrenzieren. */
+  .tm-btn--demo {
+    border-color: color-mix(in oklab, var(--tm-violet-500) 32%, transparent);
+    background: color-mix(in oklab, var(--tm-violet-500) 10%, transparent);
+    color: var(--tm-violet-200);
+  }
+  .tm-btn--demo:hover {
+    background: color-mix(in oklab, var(--tm-violet-500) 18%, transparent);
+    border-color: color-mix(in oklab, var(--tm-violet-500) 50%, transparent);
+    color: var(--sl-color-white);
+  }
+  :root[data-theme='light'] .tm-btn--demo {
+    color: var(--tm-violet-800);
+    background: color-mix(in oklab, var(--tm-violet-500) 10%, white);
+    border-color: color-mix(in oklab, var(--tm-violet-500) 35%, transparent);
+  }
+  :root[data-theme='light'] .tm-btn--demo:hover {
+    background: color-mix(in oklab, var(--tm-violet-500) 15%, white);
+    color: var(--tm-violet-900);
+  }
+
+  .tm-btn--quiet {
+    color: var(--sl-color-gray-3);
+    background: transparent;
+  }
+  .tm-btn--quiet:hover { color: var(--sl-color-white); }
+  :root[data-theme='light'] .tm-btn--quiet:hover { color: var(--tm-indigo-700); }
+
+  /* ---------- Terminal ---------- */
+  .tm-hero__terminal {
+    width: min(48rem, 100%);
+    margin-top: 1.75rem;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(10, 10, 15, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 30px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(16px);
+    text-align: left;
+    animation: tm-rise 1000ms cubic-bezier(0.16, 1, 0.3, 1) 450ms both;
+  }
+
+  .tm-hero__terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.95rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .tm-hero__dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+  .tm-hero__dot--r { background: #ff5f57; }
+  .tm-hero__dot--y { background: #febc2e; }
+  .tm-hero__dot--g { background: #28c840; }
+
+  .tm-hero__terminal-title {
+    margin-left: 0.5rem;
+    font-family: var(--sl-font-mono);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.01em;
+  }
+
+  .tm-hero__terminal-body {
+    margin: 0;
+    padding: 1.1rem 1.2rem 1.25rem;
+    font-family: var(--sl-font-mono);
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.9);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .tm-c--mute    { color: rgba(255, 255, 255, 0.45); }
+  .tm-c--key     { color: #c4b5fd; }
+  .tm-c--str     { color: #86efac; }
+  .tm-c--ok      { color: #4ade80; font-weight: 700; }
+  .tm-c--accent  { color: #818cf8; font-weight: 600; }
+  .tm-c--cursor  {
+    color: #818cf8;
+    animation: tm-blink 1s steps(2) infinite;
+  }
+
+  @keyframes tm-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* ---------- Reveal ---------- */
+  @keyframes tm-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes tm-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tm-hero__orb,
+    .tm-hero__logo,
+    .tm-hero__title-row--accent,
+    .tm-c--cursor {
+      animation: none !important;
+    }
+    .tm-hero__inner > *,
+    .tm-hero__terminal {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

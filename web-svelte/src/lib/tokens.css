@@ -1,0 +1,200 @@
+/* ============================================================
+   WISSen design tokens (extracted from web/style.css)
+   Single source of truth for the SvelteKit shell.
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg: #0f1115;
+  --bg-deep: #0a0c11;          /* used by LogPeek body for "below the surface" feel */
+  --bg-elev: #141821;
+  --surface: #1a1d24;
+  --surface-2: #20242d;
+  --surface-3: #262b36;
+  --border: #2d3341;
+  --border-soft: #232834;
+  --border-strong: #3a4152;    /* hover-state borders, slightly brighter than --border */
+
+  /* Text */
+  --text: #e7ebf3;
+  --text-mute: #9aa3b5;
+  --text-dim: #6b7383;
+
+  /* Accents */
+  --accent: #6ea8fe;
+  --accent-hover: #82b4ff;     /* primary-button hover */
+  --accent-ink: #0b1220;
+  --accent-soft: rgba(110, 168, 254, 0.12);
+  --accent-soft-strong: rgba(110, 168, 254, 0.18);  /* expanded-state fill */
+  --accent-flash: rgba(110, 168, 254, 0.42);        /* deep-link flash peak */
+  --accent-border: rgba(110, 168, 254, 0.35);
+
+  --success: #4cc9a0;
+  --warning: #ffa94d;
+  --danger: #ff6b6b;
+
+  /* Status soft-tints + matching borders — used by toasts, cards in
+   * fresh/error states, status pills. Single source so theming is one edit. */
+  --success-soft: rgba(76, 201, 160, 0.12);
+  --success-border: rgba(76, 201, 160, 0.35);
+  --warning-soft: rgba(255, 169, 77, 0.08);
+  --warning-soft-strong: rgba(255, 169, 77, 0.16);
+  --warning-flash: rgba(255, 169, 77, 0.42);
+  --warning-border: rgba(255, 169, 77, 0.35);
+  --danger-soft: rgba(255, 107, 107, 0.10);
+  --danger-soft-strong: rgba(255, 107, 107, 0.18);
+  --danger-border: rgba(255, 107, 107, 0.35);
+  --danger-border-strong: rgba(255, 107, 107, 0.45);
+
+  /* Grade semantics */
+  --g-excellent: #4cc9a0;
+  --g-good: #6ea8fe;
+  --g-ok: #ffa94d;
+  --g-fail: #ff6b6b;
+  --g-excellent-soft: rgba(76, 201, 160, 0.12);
+  --g-fail-soft: rgba(255, 107, 107, 0.10);
+
+  /* Semester chip palette — distinct hues, low chroma, dark-mode legible.
+   * The *-border tokens are derived alphas of the base hues, used by the
+   * sem-badge component to tint its border without re-declaring rgba. */
+  --sem-1: #9bb6e0;
+  --sem-2: #c39bdf;
+  --sem-1-border: rgba(155, 182, 224, 0.3);
+  --sem-2-border: rgba(195, 155, 223, 0.3);
+
+  /* Header surface: subtle dark wash on table headers, sits on top of
+   * --surface and reads as "section header" without a hard color shift. */
+  --surface-header: rgba(0, 0, 0, 0.15);
+
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.35);
+  --shadow-lg: 0 20px 50px rgba(0,0,0,.45);
+
+  /* Motion */
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);  /* strong ease-out-expo for intentional reveals (e.g. Stundenplan expand) */
+  --t-fast: 120ms;
+  --t: 150ms;
+  --t-slow: 300ms;
+
+  /* Shell layout — Rail is permanently expanded on desktop. */
+  --rail-w: 220px;
+  --rail-w-expanded: 220px;
+  --topbar-h: 44px;
+  --peek-w: 360px;
+  --tabbar-h: 56px;
+}
+
+/* Mobile breakpoint: rail collapses, topbar grows to a touch-friendly
+   height, and a bottom tab bar appears. The +layout/Rail/Topbar/MobileTabBar
+   components consume these vars. */
+@media (max-width: 720px) {
+  :root {
+    --rail-w: 0px;
+    --topbar-h: 52px;
+  }
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ambient radial-gradient atmosphere als fixed-positioned Pseudo-Element
+ * statt body { background-attachment: fixed }. Auf iPad Safari triggert
+ * background-attachment:fixed bei jedem Scroll einen Full-Background-
+ * Repaint — Pseudo-Element mit position:fixed ist compositor-friendly
+ * und wird einmal gepaintet. Visuell identisch zur bisherigen Lösung. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 600px at 85% -20%, rgba(110, 168, 254, 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(76, 201, 160, 0.06), transparent 60%);
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select { font: inherit; color: inherit; }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Pulse keyframe used by status pill, peek LED, etc. */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(110, 168, 254, .55); }
+  70%  { box-shadow: 0 0 0 10px rgba(110, 168, 254, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(110, 168, 254, 0);    }
+}
+
+@keyframes pulseGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(76, 201, 160, .55); }
+  70%  { box-shadow: 0 0 0 8px rgba(76, 201, 160, 0);  }
+  100% { box-shadow: 0 0 0 0 rgba(76, 201, 160, 0);    }
+}
+
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* prefers-reduced-motion: each component declares its own opacity-fade
+ * fallback in its `@media (prefers-reduced-motion: reduce)` block. No
+ * global "nuke all animations" rule — that broke per-component motion
+ * choreography (e.g. a pulse swap to static-dim, not 1-iteration). */

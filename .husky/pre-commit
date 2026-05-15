@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Auto-check: if any web/mobile/* file is staged, web/mobile/sw.js must also be staged with VERSION change.
+
+STAGED_MOBILE=$(git diff --cached --name-only -- 'web/mobile/' | grep -v 'web/mobile/sw.js' || true)
+STAGED_SW=$(git diff --cached --name-only -- 'web/mobile/sw.js' || true)
+
+if [ -n "$STAGED_MOBILE" ] && [ -z "$STAGED_SW" ]; then
+  echo "web/mobile/* geaendert aber web/mobile/sw.js NICHT - Cache-Bump fehlt"
+  echo "   Bitte die VERSION-Konstante in web/mobile/sw.js inkrementieren und stagen."
+  exit 1
+fi
+
+# Run tests
+npm test --silent

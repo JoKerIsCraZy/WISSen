@@ -1,0 +1,45 @@
+name: Release Drafter
+
+# Generiert automatisch Draft-Release-Notes basierend auf gemergten PR-Titles.
+# Pairs mit pr-title-lint.yml (Conventional Commits werden in Kategorien
+# gruppiert: Features / Fixes / Chores / etc.).
+#
+# Config: .github/release-drafter.yml (NICHT in .github/workflows/!)
+#
+# Workflow:
+#   1. PR wird gemergt -> Drafter updated den nächsten Draft-Release automatisch
+#   2. Du gehst auf Releases -> Edit Draft -> Publish (oder via release.yml)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-drafter-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  draft:
+    name: Update release draft
+    runs-on: ubuntu-latest
+    permissions:
+      # Erstellt / updated den Draft-Release
+      contents: write
+      # Labelt PRs (autolabeler-Feature)
+      pull-requests: write
+    steps:
+      - name: Update draft
+        uses: release-drafter/release-drafter@6a93d829887aa2e0748befe2e808c66c0ec6e4c7 # v6
+        with:
+          config-name: release-drafter.yml
+          # Disable wenn nur auf push:main triggern soll
+          disable-autolabeler: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

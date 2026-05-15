@@ -1,0 +1,49 @@
+name: OSV-Scanner
+
+# Googles OSV-Datenbank (Open Source Vulnerabilities) — ergänzt
+# Trivy und Dependabot, deckt oft Lücken in der GHSA-DB ab.
+# Scannt package-lock.json (root) + web-svelte/package-lock.json.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'web-svelte/package.json'
+      - 'web-svelte/package-lock.json'
+      - '.github/workflows/osv-scanner.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'web-svelte/package.json'
+      - 'web-svelte/package-lock.json'
+  schedule:
+    # wöchentlich, Donnerstag 04:37 UTC
+    - cron: '37 4 * * 4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: osv-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: OSV-Scanner
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      # Scan-Paths: root + Svelte-Frontend
+      scan-args: |-
+        --lockfile=./package-lock.json
+        --lockfile=./web-svelte/package-lock.json
+      # SARIF upload aktivieren
+      upload-sarif: true
+    permissions:
+      contents: read
+      security-events: write
+      actions: read

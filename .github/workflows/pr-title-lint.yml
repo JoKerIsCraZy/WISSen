@@ -1,0 +1,69 @@
+name: PR Title Lint
+
+# Erzwingt Conventional Commits im PR-Title (siehe CONTRIBUTING.md /
+# git-workflow). Vorbereitung für Release-Drafter / Auto-Changelog.
+#
+# Erlaubte Typen: feat, fix, refactor, docs, test, chore, perf, ci, build, style, revert
+# Beispiele:
+#   feat: add telegram bot inline keyboard
+#   fix(scraper): retry on tocco SSO timeout
+#   chore(deps): bump express to 5.3.0
+
+# zizmor: ignore[dangerous-triggers]
+# Begründung: pull_request_target nötig für write-Zugriff auf PR-Status/Labels
+# vom Forked-PR. Action `amannn/action-semantic-pull-request` liest nur den PR-Titel,
+# führt keinen PR-Code aus, kein untrusted checkout.
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      statuses: write
+    steps:
+      - name: Check semantic PR title
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Erlaubte Conventional-Commits-Typen
+          types: |
+            feat
+            fix
+            refactor
+            docs
+            test
+            chore
+            perf
+            ci
+            build
+            style
+            revert
+          # Optional: Scopes erzwingen falls Klammer benutzt wird.
+          # Leer = beliebige Scopes erlaubt (z.B. "feat(scraper):", "fix(bot):").
+          requireScope: false
+          # Subject muss klein anfangen (Conventional-Commits-Standard)
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            Der Subject-Teil "{subject}" darf nicht mit einem Grossbuchstaben anfangen.
+            Beispiel: "feat: add telegram inline keyboard" (NICHT "feat: Add ...")
+          # Dependabot-PRs ignorieren (Title-Format ist anders)
+          ignoreLabels: |
+            dependencies
+          # Kommentar auf den PR posten wenn das Format falsch ist
+          headerPatternCorrespondence: type, scope, subject

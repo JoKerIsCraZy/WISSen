@@ -1,0 +1,633 @@
+/* ============================================================
+   Aktuell view — mobile-native take on the dashboard "Now" surface.
+   Designed for thumb-zone reach, glance-readability at arm's length,
+   and sub-300ms touch feedback per Emil's rule (transform: scale on
+   :active, ease-out exponential, no bounce).
+   ============================================================ */
+
+/* Now-card no longer embeds the Floor-Plan: room is shown in the meta line,
+ * and the inline plan lives one tap away (Nächste-Lektion dropdown +
+ * Heute-noch list). Keeps the Aktuell card lean. */
+
+/* Now-card: most-prominent surface on the page. Larger left padding-line
+   anchored by an accent dot when active (no side-stripe border — banned).
+   Hierarchy: kicker label (10px caps) → big mono time → title → meta. */
+.m-now-card {
+  position: relative;
+  /* Horizontal alignment with siblings comes from .m-main's padding alone;
+   * adding margin here used to inset the Now-Card 14px more than the lists
+   * underneath, making it visually narrower than the rest. */
+  margin: 12px 0 0;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Tappable feel even though it isn't a link — feedback tightens daily-use. */
+  transition: transform var(--t-fast) var(--ease);
+}
+.m-now-card--active {
+  border-color: var(--accent-border);
+  background:
+    radial-gradient(120% 80% at 0% 0%, var(--accent-glow), transparent 60%),
+    var(--surface);
+}
+.m-now-card--idle { border-style: dashed; opacity: 0.96; }
+
+.m-now-card__lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.m-now-card--active .m-now-card__lbl {
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.m-now-card--active .m-now-card__lbl::before {
+  content: '';
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  /* Static halo (composited once, never animates). The breathing layer is
+   * the wrapping ::after on the parent — see below. */
+  box-shadow: 0 0 0 3px var(--accent-shadow);
+}
+.m-now-card--active .m-now-card__lbl {
+  position: relative;
+}
+/* GPU-only pulse: a transparent ring scales out + fades. transform + opacity
+ * are compositor-only properties; no repaint per frame, unlike box-shadow. */
+.m-now-card--active .m-now-card__lbl::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--accent-pulse);
+  transform-origin: center;
+  animation: m-now-pulse 1.6s var(--ease) infinite;
+  pointer-events: none;
+}
+
+@keyframes m-now-pulse {
+  0%   { transform: scale(0.9); opacity: 0.55; }
+  70%  { transform: scale(2.4); opacity: 0;    }
+  100% { transform: scale(2.4); opacity: 0;    }
+}
+
+.m-now-card__time {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-size: clamp(20px, 6.2vw, 26px);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+.m-now-card--active .m-now-card__time { color: var(--accent); }
+.m-now-card__title {
+  font-size: clamp(16px, 4.6vw, 18px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin-top: 2px;
+  /* Modul-Name mittig — visueller Anker im Aktuell-Now-Card. Greift NUR
+   * in dieser Card (Stundenplan etc. nutzen andere Title-Klassen).
+   *
+   * align-self:center macht den Block selbst kompakt mittig (wie der
+   * Stockwerk-Badge .m-now-tile__floor-caption), max-width:100% schützt
+   * gegen Overflow wenn ein langer Modulname die ganze Card-Breite
+   * füllen würde. text-align:center sorgt zusätzlich dafür, dass
+   * Zeilen-Wraps bei langen Titeln auch innerhalb gleichmäßig mittig
+   * laufen. */
+  align-self: center;
+  max-width: 100%;
+  text-align: center;
+}
+.m-now-card__meta {
+  font-size: 13px;
+  color: var(--text-mute);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+/* Idle Now-Card: hairline between the headline ("Heute keine Lektionen")
+ * and the "Nächste Lektion: …" meta line so the meta reads as a separate
+ * piece of info, not a subtitle. :not(:empty) keeps the divider away
+ * when there's no upcoming lesson and the meta would be blank. */
+.m-now-card--idle .m-now-card__meta:not(:empty) {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* Tiles row — stacked one-per-row for thumb-readability.
+   Aligns with the Now-Card and the Heute-noch list (all live in m-main's
+   14px padding; no extra horizontal margin here). */
+.m-now-tiles {
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.m-now-tile {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.m-now-tile:active {
+  transform: scale(0.985);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+.m-now-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.m-now-tile__lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.m-now-tile__val {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+  line-height: 1.15;
+}
+.m-now-tile__sub {
+  font-size: 13px;
+  color: var(--text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.m-now-tile__chev {
+  width: 18px;
+  height: 18px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: transform var(--t-fast) var(--ease);
+}
+
+/* Expandable variant — Tile is a button, panel slides open below.
+   Shell wraps both so border + radius envelope the whole expanded card. */
+.m-now-tile-shell {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.m-now-tile-shell--open { border-color: var(--border); }
+.m-now-tile-shell .m-now-tile {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.m-now-tile--btn[aria-expanded="true"] .m-now-tile__chev {
+  transform: rotate(90deg);
+}
+.m-now-tile__panel {
+  border-top: 1px solid var(--border-soft);
+  padding: 12px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: tilePanelIn 200ms var(--ease);
+}
+@keyframes tilePanelIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.m-now-tile__dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.m-now-tile__dl dt {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10.5px;
+  align-self: center;
+}
+.m-now-tile__dl dd {
+  margin: 0;
+  color: var(--text);
+}
+.m-now-tile__floor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* When the floor block is embedded INSIDE the Now-Card (idle / next-today
+ * states), give it room to breathe from the meta line above AND let the
+ * RaumView stage bleed to the card's outer edges so it looks substantial,
+ * not like a tiny inset image. The caption pill stays inside the card's
+ * text-content area for visual hierarchy; only the stage bleeds. */
+.m-now-card .m-now-tile__floor {
+  margin-top: 12px;
+}
+/* Make the embedded RaumView genuinely big: bleed horizontally past the
+ * card's 18px padding (gain ~36px of width) AND override the stage's
+ * native ~2:1 aspect-ratio with a taller 14:9 in this context so the
+ * floor plan actually reads at a glance on phones. Overriding the
+ * aspect-ratio stretches the room boxes a little vertically — that's
+ * acceptable here because the goal is "see it" not "exact geometry";
+ * the standalone editors keep the original ratio. */
+/* The floor plan stays INSIDE the card's content area — no horizontal
+ * bleed. width: 100% + max-width: 100% guarantees it can never extend
+ * past .m-now-tile__floor (which itself is constrained by the card's
+ * 18px padding) regardless of any internal element width. */
+.m-now-card .m-now-tile__floor {
+  max-width: 100%;
+  overflow: hidden;
+}
+.m-now-card .m-now-tile__floor .raumview {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+.m-now-card .m-now-tile__floor .raumview .raumview__stage {
+  width: 100%;
+  max-width: 100%;
+  /* min-height nudges the stage just past the natural ~2:1 aspect-ratio
+   * (which gives ~155px in a 290px-wide iPhone-SE card). 180px keeps the
+   * floor plan readable without crowding the card on tiny phones. */
+  min-height: 180px;
+  box-sizing: border-box;
+}
+
+/* Small-device legibility tuning for the embedded RaumView. The default
+ * room sizing is calibrated for the 1000+px standalone editor; in a
+ * narrow phone card those same labels feel cramped and the long utility
+ * names ("Treppenhaus", "Schulleitung-HB", "Aufenthalt") truncate. */
+.m-now-card .m-now-tile__floor .raumview .raumview__room {
+  font-size: 10px;
+}
+.m-now-card .m-now-tile__floor .raumview .raumview__room-label {
+  padding: 0 2px;
+}
+.m-now-card .m-now-tile__floor .raumview .raumview__room--utility {
+  font-size: 8.5px;
+}
+.m-now-card .m-now-tile__floor .raumview .raumview__room--utility .raumview__room-label {
+  /* Two short lines beat one truncated mess. */
+  white-space: normal;
+  line-height: 1.05;
+  text-align: center;
+  text-overflow: clip;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.m-now-card .m-now-tile__floor .raumview .raumview__room--active {
+  font-size: 11px;
+}
+
+/* iPhone SE / very narrow phones: every label except the numbered
+ * classrooms is unreadable at this size. Hide utility labels entirely
+ * — the hatched fill already tells the user "non-classroom"; trying to
+ * fit "Schulleitung-HB" into a 38px box just clutters the diagram.
+ * Drop classroom font another step too so room numbers don't crowd. */
+@media (max-width: 400px) {
+  .m-now-card .m-now-tile__floor .raumview .raumview__room {
+    font-size: 9.5px;
+  }
+  .m-now-card .m-now-tile__floor .raumview .raumview__room--active {
+    font-size: 10.5px;
+  }
+  .m-now-card .m-now-tile__floor .raumview .raumview__room--utility .raumview__room-label {
+    display: none;
+  }
+}
+
+/* Idle Now-Card preview block: shows the upcoming non-today lesson's full
+ * details below the meta line. Hierarchy: title (regular weight, 14px) +
+ * meta (12px, dim). Sits above the embedded floor view. */
+.m-now-card__next {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.m-now-card__next-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  /* Modul-Name unter „Nächste Lektion: …" mittig — visuell konsistent
+   * mit dem .m-now-card__meta-Text darüber, der durch parent
+   * align-items:center der .m-card schon als intrinsischer Block mittig
+   * sitzt. Der .m-now-card__next-Wrapper stretcht hier zur Max-Content-
+   * Breite seiner Kids, deshalb genügt text-align nicht — wir müssen
+   * den Text explizit zentrieren. */
+  text-align: center;
+}
+.m-now-card__next-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+/* Caption ABOVE the floor-plan inside the Nächste-Lektion dropdown.
+   We render our own pill above, and hide the RaumView's internal caption
+   underneath — the geographic anchor reads better before the visual. */
+.m-now-tile__floor-caption {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* align-self: center → die Pill sitzt mittig in ihrer Flex-Column.
+   * Vorher flex-start (= links angeknallt) — visuell unbalanciert weil
+   * das Floor-Plan-Image darunter naturally zentriert ist und die Pille
+   * an der linken Kante alleine stand. */
+  align-self: center;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  font-size: 11px;
+}
+.m-now-tile__floor-tag {
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.m-now-tile__floor-room {
+  color: var(--text);
+  font-weight: 600;
+}
+.m-now-tile__floor .raumview {
+  margin: 0;
+}
+.m-now-tile__floor .raumview__caption {
+  display: none;
+}
+
+/* Letzte-Änderung dropdown list. */
+.m-now-tile__count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+.m-now-tile__val--empty { color: var(--text-dim); }
+.m-now-tile__kind {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--warning);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+.m-now-tile__changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border-soft);
+  animation: tilePanelIn 200ms var(--ease);
+}
+.m-now-tile__changes li + li .m-now-tile__change {
+  border-top: 1px solid var(--border-soft);
+}
+/* Swipe-to-dismiss: pan-y signalisiert dass vertikales Scrollen erlaubt
+ * ist, horizontales aber von uns gehandled wird. Sonst würde der Browser
+ * z.B. auf iOS die page-back-Geste zuerst kapern. */
+.m-now-tile__changes li {
+  touch-action: pan-y;
+}
+/* Swipe-Item-Container: position:relative + overflow:hidden damit der
+ * Backdrop unter dem Button liegt und beim Wisch nicht überläuft. */
+.m-now-tile__change-item {
+  position: relative;
+  overflow: hidden;
+}
+/* Swipe-Backdrop: liegt unter dem Button (z-index 0). Sichtbar wird er
+ * durch JS-gesteuerte opacity während der Geste. Roter Gradient + Trash-
+ * Icon rechts signalisieren die Dismiss-Aktion. Bei is-armed-Klasse
+ * (Threshold überschritten) wird der Backdrop saturierter und das Icon
+ * skaliert hoch — taktiles "ready-to-fire"-Feedback. */
+.m-now-tile__change-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 18px;
+  background: linear-gradient(to left,
+    var(--danger-bg) 0%,
+    var(--danger-soft-hint) 60%,
+    transparent 100%);
+  color: var(--danger);
+  pointer-events: none;
+  opacity: 0;
+}
+.m-now-tile__change-bg-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform var(--t-fast) var(--ease);
+}
+.m-now-tile__change-bg-icon {
+  flex-shrink: 0;
+  transition: transform var(--t-fast) var(--ease);
+}
+/* "Armed" — Threshold überschritten, Loslassen würde dismissen. Backdrop
+ * intensiviert sich, Icon scale-up als haptik-äquivalentes visual. */
+.m-now-tile__change-bg.is-armed {
+  background: linear-gradient(to left,
+    var(--danger-bg-armed) 0%,
+    var(--danger-soft) 60%,
+    transparent 100%);
+}
+.m-now-tile__change-bg.is-armed .m-now-tile__change-bg-icon {
+  transform: scale(1.15);
+}
+.m-now-tile__change-bg.is-armed .m-now-tile__change-bg-label {
+  transform: translateX(-2px);
+}
+/* Button liegt ÜBER dem Backdrop und braucht eigenen opaken Background
+ * sonst zeigt der Backdrop schon im Ruhezustand durch. */
+.m-now-tile__change-item .m-now-tile__change {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+}
+.m-now-tile__change-item .m-now-tile__change:active {
+  background: var(--surface-2);
+}
+/* "Alle gelesen"-Action-Row als first-li im Panel — rechtsbündig, ghost
+ * style, dezent. Drückt nicht über die Liste, dient als Header der
+ * dismissable Items darunter. */
+.m-now-tile__action-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 10px 0;
+  /* Diese Row ist NICHT swipeable — touch-action zurücksetzen */
+  touch-action: auto;
+}
+.m-now-tile__dismiss-all {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-mute);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+}
+.m-now-tile__dismiss-all:active:not(:disabled) {
+  transform: scale(0.96);
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+}
+.m-now-tile__dismiss-all:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.m-now-tile__change {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--t-fast) var(--ease);
+}
+.m-now-tile__change:active { background: var(--surface-2); }
+/* Inline-Diff im Titel-Text der Liste. Mono damit Tabular-Nums alignen. */
+.m-now-tile__change-diff {
+  font-weight: 600;
+  margin-left: 2px;
+}
+.m-now-tile__change-arrow {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+/* Top-Tile-Note (m-now-tile__val) — bleibt prev → curr im Wert-Slot, weil
+ * das Top-Tile keine ikonisch-Modulnummer-Format-Spalte hat. */
+.m-now-tile__val-prev {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.55;
+}
+.m-now-tile__val-arrow {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.m-now-tile__val-curr {
+  font-weight: 600;
+}
+.m-now-tile__change-icon {
+  font-size: 16px;
+  text-align: center;
+  color: var(--warning);
+}
+/* Letzte-Änderung-Liste: Modifier für Note-Diff-Icons. Nach der Base-Klasse
+ * platziert, damit die Farbe (accent/g-good) die Default-orange aus
+ * .m-now-tile__change-icon korrekt überschreibt — bei gleicher Specificity
+ * gewinnt die später definierte Regel.
+ *  ✎ (note-change) — accent-blau, eine bestehende Modul-Note hat sich geändert
+ *  ＋ (note-new)   — grade-excellent grün, eine Note wurde erstmals erfasst
+ *  ⇄ (Zimmerwechsel) — Default-orange aus der Base-Klasse */
+.m-now-tile__change-icon--note-change {
+  color: var(--accent);
+  font-size: 16px;
+}
+.m-now-tile__change-icon--note-new {
+  color: var(--g-good, var(--accent));
+  font-size: 17px;
+  font-weight: 700;
+}
+.m-now-tile__change-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.m-now-tile__change-title {
+  font-size: 13px;
+  color: var(--text);
+  /* Mobile-Phones sind schmal — lange Modul-Namen + Diff-Werte würden mit
+   * nowrap/ellipsis abgeschnitten. Wrap auf mehrere Zeilen, mit
+   * overflow-wrap so dass auch lange Wörter (z.B. zusammengesetzte
+   * Veranstaltungs-Titel) brechen wenn nötig. */
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.m-now-tile__change-sub { font-size: 11px; color: var(--text-mute); }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-now-card--active .m-now-card__lbl::after {
+    animation: none;
+    opacity: 0;
+  }
+  .m-now-tile { transition: none; }
+  .m-now-tile:active { transform: none; }
+  .m-now-tile__chev { transition: none; }
+  .m-now-tile__panel { animation: none; }
+}

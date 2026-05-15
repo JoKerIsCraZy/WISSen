@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Sitemap: https://wissen.host/sitemap-index.xml
+
+# Don't index the raw demo PWA — it's iframe content, indexing standalone confuses search.
+Disallow: /pwa-demo/

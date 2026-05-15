@@ -1,0 +1,337 @@
+---
+const COMMAND = 'docker run -d -p 3000:3000 ghcr.io/jokeriscrazy/wissen:latest';
+---
+
+<section class="tm-cta">
+  <div class="tm-cta__bg" aria-hidden="true">
+    <div class="tm-cta__mesh"></div>
+    <div class="tm-cta__grain"></div>
+  </div>
+
+  <div class="tm-cta__inner" data-reveal>
+    <span class="tm-eyebrow">In unter 60 Sekunden live</span>
+    <h2 class="tm-cta__title">
+      Ein Befehl. <span class="tm-cta__title-em">Dein eigenes Schul-Dashboard.</span>
+    </h2>
+    <p class="tm-cta__sub">
+      Source-available, self-hosted, mit AES-256-GCM-Encryption-at-Rest und
+      vollem Push-Stack. MIT-lizenziert — privat wie kommerziell frei nutzbar.
+    </p>
+
+    <div class="tm-cta__cmd">
+      <span class="tm-cta__prompt" aria-hidden="true">$</span>
+      <code class="tm-cta__code">{COMMAND}</code>
+      <button
+        class="tm-copy"
+        type="button"
+        data-copy={COMMAND}
+        aria-label="Befehl kopieren"
+      >
+        <span class="tm-copy__icons" aria-hidden="true">
+          <svg class="tm-copy__icon tm-copy__icon--copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="tm-copy__icon tm-copy__icon--check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="tm-copy__label">Kopieren</span>
+      </button>
+    </div>
+
+    <div class="tm-cta__actions">
+      <a href="/start/quick-start/" class="tm-btn tm-btn--primary">Quick Start</a>
+      <a href="/projekt/lizenz/" class="tm-btn tm-btn--ghost">Lizenz lesen</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tm-cta {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(3.5rem, 5vw, 6.5rem) clamp(1rem, 4vw, 2.5rem);
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .tm-cta__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  /* Single, calmer mesh: one indigo body, one violet kicker. Lower
+     opacity, larger blur — felt as atmosphere, not as a poster. */
+  .tm-cta__mesh {
+    position: absolute;
+    inset: -10%;
+    background:
+      radial-gradient(ellipse 55% 65% at 25% 30%, color-mix(in oklab, var(--tm-indigo-600) 32%, transparent), transparent 62%),
+      radial-gradient(ellipse 45% 55% at 78% 75%, color-mix(in oklab, var(--tm-violet-500) 24%, transparent), transparent 60%);
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: tm-meshDrift 22s ease-in-out infinite alternate;
+  }
+  :root[data-theme='light'] .tm-cta__mesh { opacity: 0.35; }
+
+  /* Subtle dot grain to keep the mesh from feeling like a stock template. */
+  .tm-cta__grain {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+    background-size: 22px 22px;
+    mix-blend-mode: overlay;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  :root[data-theme='light'] .tm-cta__grain {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
+
+  @keyframes tm-meshDrift {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-24px, 24px, 0); }
+  }
+
+  .tm-cta__inner {
+    max-width: 50rem;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 700ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tm-cta__inner.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tm-cta__title {
+    font-size: clamp(1.95rem, 1.3rem + 1.7vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+    margin: 0.65rem 0 1rem;
+    text-wrap: balance;
+  }
+
+  /* Gradient pull on the rewarding half of the headline — earned without
+     turning into a billboard. */
+  .tm-cta__title-em {
+    background: linear-gradient(135deg, var(--tm-indigo-300), var(--tm-violet-400) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  :root[data-theme='light'] .tm-cta__title-em {
+    background: linear-gradient(135deg, var(--tm-indigo-700), var(--tm-violet-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .tm-cta__sub {
+    color: var(--sl-color-gray-2);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 38rem;
+    margin: 0 auto 1.85rem;
+    text-wrap: pretty;
+  }
+
+  /* Command box: flex with min-width:0 + word-break ensures the long
+     ghcr URL wraps gracefully on mobile instead of horizontal-scrolling. */
+  .tm-cta__cmd {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem 0.75rem 0.95rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg,
+      rgba(13, 13, 20, 0.92),
+      rgba(8, 8, 14, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--sl-font-mono);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 auto 1.65rem;
+    max-width: 44rem;
+    width: 100%;
+    text-align: left;
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+      0 18px 40px -18px rgba(0, 0, 0, 0.5);
+    transition: border-color 220ms ease, box-shadow 220ms ease;
+  }
+  .tm-cta__cmd:hover {
+    border-color: color-mix(in oklab, var(--tm-indigo-500) 28%, rgba(255,255,255,0.08));
+  }
+
+  .tm-cta__prompt {
+    color: color-mix(in oklab, var(--tm-indigo-300) 70%, transparent);
+    font-weight: 600;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .tm-cta__code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-all;
+    line-height: 1.45;
+  }
+
+  .tm-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--tm-indigo-500) 16%, transparent);
+    border: 1px solid color-mix(in oklab, var(--tm-indigo-500) 32%, transparent);
+    color: var(--tm-indigo-200);
+    font-family: var(--sl-font);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    align-self: flex-start;
+    transition:
+      background 220ms ease,
+      color 220ms ease,
+      border-color 220ms ease,
+      transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tm-copy:hover {
+    background: color-mix(in oklab, var(--tm-indigo-500) 26%, transparent);
+    color: var(--tm-indigo-100);
+    transform: translateY(-1px);
+  }
+  .tm-copy:active { transform: translateY(0); transition-duration: 100ms; }
+  .tm-copy:focus-visible {
+    outline: 2px solid var(--tm-indigo-300);
+    outline-offset: 2px;
+  }
+
+  /* Icon swap: clipboard fades/scales out, check fades/scales in. */
+  .tm-copy__icons {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .tm-copy__icon {
+    position: absolute;
+    inset: 0;
+    transition:
+      opacity 200ms ease,
+      transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tm-copy__icon--check {
+    opacity: 0;
+    transform: scale(0.6) rotate(-12deg);
+  }
+  .tm-copy.is-copied {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.5);
+    background: rgba(74, 222, 128, 0.14);
+  }
+  .tm-copy.is-copied .tm-copy__icon--copy {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  .tm-copy.is-copied .tm-copy__icon--check {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+
+  .tm-cta__actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  /* Mobile: stack copy button below the command for clean reading. */
+  @media (max-width: 560px) {
+    .tm-cta__cmd {
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .tm-copy {
+      align-self: stretch;
+      justify-content: center;
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tm-cta__mesh { animation: none; }
+    .tm-cta__inner { opacity: 1; transform: none; transition: none; }
+    .tm-copy,
+    .tm-copy__icon { transition: none; }
+  }
+</style>
+
+<script>
+  const inner = document.querySelector<HTMLElement>('.tm-cta__inner[data-reveal]');
+  if (inner && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(inner);
+  } else if (inner) {
+    inner.classList.add('is-visible');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.tm-copy').forEach((btn) => {
+    let resetTimer: number | undefined;
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      const label = btn.querySelector<HTMLElement>('.tm-copy__label');
+      const original = label?.textContent ?? 'Kopieren';
+      btn.classList.add('is-copied');
+      if (label) label.textContent = 'Kopiert';
+      btn.setAttribute('aria-label', 'Befehl kopiert');
+
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(() => {
+        btn.classList.remove('is-copied');
+        if (label) label.textContent = original;
+        btn.setAttribute('aria-label', 'Befehl kopieren');
+      }, 1800);
+    });
+  });
+</script>

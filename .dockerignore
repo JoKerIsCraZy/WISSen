@@ -1,0 +1,98 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Environment (secrets never in image)
+.env
+.env.local
+.env.*.local
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+docker-compose.override.yml.example
+
+# Dependencies (installed in image)
+node_modules/
+npm-debug.log
+npm-debug.log.*
+yarn-error.log
+yarn-error.log.*
+.npm/
+
+# Runtime data (mounted as volume, not baked into image)
+data/
+data/*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation (not needed at runtime)
+*.md
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Tests (not needed at runtime)
+test/
+tests/
+__tests__/
+*.test.js
+*.spec.js
+.mocha
+.nyc_output
+coverage/
+
+# Build artifacts
+# Note: dist/ is REGENERATED inside the image by the webbuild stage.
+# Sending the local dist/ in the build context would just waste bytes
+# and risk shipping stale output. The webbuild stage produces it fresh
+# from web-svelte/src/.
+dist/
+build/
+*.tgz
+
+# SvelteKit frontend transient state — installed/generated inside the
+# webbuild stage, never useful from the host. Source (web-svelte/src,
+# package.json, svelte.config.js, vite.config.ts) ships into the build
+# context as expected.
+web-svelte/node_modules/
+web-svelte/.svelte-kit/
+web-svelte/build/
+web-svelte/.vite/
+web-svelte/dist/
+
+# Local-only tooling — never ship to the image.
+# Hotspot-Editor HTMLs für die Floorplan-Bearbeitung; rein lokales Werkzeug,
+# gehört in keinen Container und auch nicht ins Repo (siehe .gitignore).
+raumpläne/
+raumplaene/
+
+# Personal / agent context files (impeccable skill), not runtime.
+PRODUCT.md
+DESIGN.md
+
+# Session resume notes (lokal).
+SESSION_RESUME.md
+
+# Design-Prototypen (Explorationen).
+prototypes/
+
+# Android companion app (lokal, eigenes Repo wenn überhaupt).
+wissen/
+wissen-release.jks
+
+# Claude Code lokaler State.
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store

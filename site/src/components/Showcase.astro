@@ -1,0 +1,595 @@
+---
+// Visual showcase: pixel-faithful WISSen PWA mockup + side narrative.
+// Mirrors web/mobile/css tokens 1:1 — bg #0f1115, accent #6ea8fe, etc.
+---
+
+<section class="tm-showcase">
+  <div class="tm-showcase__copy" data-reveal>
+    <span class="tm-eyebrow">Mobile-PWA</span>
+    <h2 class="tm-showcase__title">Ein App-Icon. Echte Push. Kein App-Store.</h2>
+    <p class="tm-showcase__text">
+      WISSen läuft als <strong>Progressive Web App</strong> auf iOS und Android.
+      Installierst du sie über den Browser, sieht sie aus wie eine native App,
+      empfängt echte Web-Push-Notifications und funktioniert offline.
+      Kein Store, keine Review, kein Abo — du selbst hostest, du selbst entscheidest.
+    </p>
+    <ul class="tm-showcase__list">
+      <li><span class="tm-bullet">●</span> Installierbar mit einem Tap im Browser-Menü</li>
+      <li><span class="tm-bullet">●</span> Echte Web-Push, auch bei geschlossener App</li>
+      <li><span class="tm-bullet">●</span> Offline-Caching via Service Worker</li>
+      <li><span class="tm-bullet">●</span> Bottom-Tab-Bar für Daumen-Navigation</li>
+      <li><span class="tm-bullet">●</span> Inline-Raumpläne mit Live-Highlight</li>
+    </ul>
+    <div class="tm-showcase__actions">
+      <a href="/features/mobile-pwa/" class="tm-link-arrow">Mobile-App-Doku <span aria-hidden="true">→</span></a>
+      <a href="/features/push/" class="tm-link-arrow">Push einrichten <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+
+  <div class="tm-showcase__visual" data-reveal>
+    <div class="tm-phone" aria-hidden="true">
+      <div class="tm-phone__notch"></div>
+
+      <div class="tm-phone__screen">
+        <!-- iOS status bar -->
+        <div class="tm-ios-bar">
+          <span class="tm-ios-bar__time">9:41</span>
+          <span class="tm-ios-bar__sigs">
+            <svg viewBox="0 0 18 12" width="18" height="11" aria-hidden="true">
+              <rect x="0" y="8" width="3" height="4" rx="0.4" fill="currentColor"/>
+              <rect x="5" y="6" width="3" height="6" rx="0.4" fill="currentColor"/>
+              <rect x="10" y="3" width="3" height="9" rx="0.4" fill="currentColor"/>
+              <rect x="15" y="0" width="3" height="12" rx="0.4" fill="currentColor"/>
+            </svg>
+            <svg viewBox="0 0 16 12" width="16" height="11" aria-hidden="true">
+              <path d="M8 2c2 0 3.8.7 5.3 2L12 5.3A6 6 0 0 0 4 5.3L2.7 4A8 8 0 0 1 8 2zm0 3c1 0 2 .4 2.8 1L9.4 7.4a2 2 0 0 0-2.8 0L5.2 6A4 4 0 0 1 8 5zm0 3a1 1 0 0 1 1 1l-1 1-1-1a1 1 0 0 1 1-1z" fill="currentColor"/>
+            </svg>
+            <svg viewBox="0 0 26 12" width="26" height="11" aria-hidden="true">
+              <rect x="0.5" y="1.5" width="22" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+              <rect x="2" y="3" width="17" height="6" rx="1" fill="currentColor"/>
+              <rect x="23" y="4.5" width="2" height="3" rx="0.5" fill="currentColor" opacity="0.6"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- App ambient background (matches PWA radial-gradients) -->
+        <div class="tm-pwa">
+          <!-- Sticky app-bar -->
+          <header class="tm-pwa__appbar">
+            <img src="/icon-512.png" alt="" width="32" height="32" class="tm-pwa__logo" />
+            <h4 class="tm-pwa__title">Aktuell</h4>
+            <span class="tm-pwa__icon-btn" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/>
+                <path d="M20.49 15A9 9 0 1 1 17.65 5.51L23 10"/>
+              </svg>
+            </span>
+          </header>
+
+          <!-- Main scroll area -->
+          <main class="tm-pwa__main">
+            <!-- Now-Card (Aktuell) -->
+            <div class="tm-pwa__now-card">
+              <div class="tm-pwa__now-pulse" aria-hidden="true"></div>
+              <div class="tm-pwa__lbl">Aktuell</div>
+              <div class="tm-pwa__time mono">09:55–11:25</div>
+              <div class="tm-pwa__module">M114 — Codeverwaltung</div>
+              <div class="tm-pwa__meta">W420 · Z. Müller</div>
+            </div>
+
+            <!-- Tile stack -->
+            <div class="tm-pwa__tiles">
+              <div class="tm-pwa__tile">
+                <div class="tm-pwa__tile-body">
+                  <div class="tm-pwa__tile-lbl">Nächste Lektion</div>
+                  <div class="tm-pwa__tile-val mono">12:25–14:00</div>
+                  <div class="tm-pwa__tile-sub">M183 Datenbanken · W214 · in 1 h</div>
+                </div>
+                <span class="tm-pwa__chev" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 6 15 12 9 18"/>
+                  </svg>
+                </span>
+              </div>
+
+              <div class="tm-pwa__tile">
+                <div class="tm-pwa__tile-body">
+                  <div class="tm-pwa__tile-lbl">Letzte Note</div>
+                  <div class="tm-pwa__tile-val tm-pwa__tile-val--good mono">5.40</div>
+                  <div class="tm-pwa__tile-sub">183 · Datenbanken · vor 2 min</div>
+                </div>
+                <span class="tm-pwa__chev" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 6 15 12 9 18"/>
+                  </svg>
+                </span>
+              </div>
+
+              <div class="tm-pwa__tile">
+                <div class="tm-pwa__tile-body">
+                  <div class="tm-pwa__tile-lbl">Letzte Änderung <span class="tm-pwa__count mono">3</span></div>
+                  <div class="tm-pwa__tile-val mono">
+                    <span class="tm-pwa__diff-prev">5.00</span>
+                    <span class="tm-pwa__diff-arrow" aria-hidden="true">→</span>
+                    <span class="tm-pwa__diff-curr">5.40</span>
+                  </div>
+                  <div class="tm-pwa__tile-sub">183 - Datenbanken</div>
+                </div>
+                <span class="tm-pwa__chev" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 6 15 12 9 18"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </main>
+
+          <!-- Push toast (animated in) -->
+          <div class="tm-pwa__toast">
+            <span class="tm-pwa__toast-dot"></span>
+            Push gesendet · 2 Geräte erreicht
+          </div>
+
+          <!-- Bottom-nav -->
+          <nav class="tm-pwa__bottomnav">
+            <a class="tm-pwa__tab tm-pwa__tab--active">
+              <span class="tm-pwa__tab-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/>
+                  <polyline points="12 7 12 12 15 14"/>
+                </svg>
+              </span>
+              <span class="tm-pwa__tab-lbl">Aktuell</span>
+            </a>
+            <a class="tm-pwa__tab">
+              <span class="tm-pwa__tab-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/>
+                  <path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>
+                  <path d="M8 8h8M8 12h6"/>
+                </svg>
+              </span>
+              <span class="tm-pwa__tab-lbl">Noten</span>
+            </a>
+            <a class="tm-pwa__tab">
+              <span class="tm-pwa__tab-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </span>
+              <span class="tm-pwa__tab-lbl">Plan</span>
+            </a>
+            <a class="tm-pwa__tab">
+              <span class="tm-pwa__tab-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </span>
+              <span class="tm-pwa__tab-lbl">Settings</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="tm-glow" aria-hidden="true"></div>
+  </div>
+</section>
+
+<style>
+  /* ==== WISSen PWA tokens — mirror web/mobile/css/base.css 1:1 ==== */
+  .tm-phone {
+    --pwa-bg: #0f1115;
+    --pwa-bg-elev: #141821;
+    --pwa-surface: #1a1d24;
+    --pwa-surface-2: #20242d;
+    --pwa-border: #2d3341;
+    --pwa-border-soft: #232834;
+    --pwa-text: #e7ebf3;
+    --pwa-text-mute: #9aa3b5;
+    --pwa-text-dim: #6b7383;
+    --pwa-accent: #6ea8fe;
+    --pwa-accent-soft: rgba(110, 168, 254, 0.12);
+    --pwa-accent-pulse: rgba(110, 168, 254, 0.35);
+    --pwa-accent-glow: rgba(110, 168, 254, 0.08);
+    --pwa-success: #4cc9a0;
+  }
+
+  /* ==== Layout ==== */
+  .tm-showcase {
+    padding: clamp(3rem, 5vw, 6rem) clamp(1rem, 4vw, 2.5rem);
+    max-width: 76rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 880px) {
+    .tm-showcase { grid-template-columns: 1.05fr 1fr; gap: 4rem; }
+  }
+
+  .tm-showcase__copy,
+  .tm-showcase__visual {
+    transition: opacity 700ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.tm-anim .tm-showcase__copy[data-reveal]:not(.is-visible)   { opacity: 0; transform: translateX(-20px); }
+  html.tm-anim .tm-showcase__visual[data-reveal]:not(.is-visible) { opacity: 0; transform: translateX(20px) scale(0.96); }
+  .tm-showcase__visual { position: relative; display: flex; justify-content: center; }
+
+  .tm-showcase__title {
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    margin: 0.5rem 0 1rem;
+  }
+  .tm-showcase__text {
+    color: var(--sl-color-gray-2);
+    font-size: 1.025rem; line-height: 1.6;
+    margin: 0 0 1.25rem;
+  }
+  .tm-showcase__list {
+    list-style: none; padding: 0; margin: 0 0 1.5rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    font-size: 0.95rem; color: var(--sl-color-gray-2);
+  }
+  .tm-bullet {
+    color: var(--tm-indigo-400);
+    margin-right: 0.45rem; font-size: 0.55em; vertical-align: middle;
+  }
+  :root[data-theme='light'] .tm-bullet { color: var(--tm-indigo-600); }
+
+  .tm-showcase__actions { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+  .tm-link-arrow {
+    color: var(--tm-indigo-300); font-weight: 600; text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklab, var(--tm-indigo-400) 40%, transparent);
+    padding-bottom: 2px;
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .tm-link-arrow:hover {
+    color: var(--tm-indigo-200);
+    border-bottom-color: var(--tm-indigo-300);
+  }
+  :root[data-theme='light'] .tm-link-arrow {
+    color: var(--tm-indigo-700);
+    border-bottom-color: color-mix(in oklab, var(--tm-indigo-600) 35%, transparent);
+  }
+  :root[data-theme='light'] .tm-link-arrow:hover { color: var(--tm-indigo-900); }
+
+  /* ==== Phone shell ==== */
+  .tm-phone {
+    position: relative;
+    width: 300px;
+    aspect-ratio: 9 / 19.5;
+    border-radius: 42px;
+    background: linear-gradient(180deg, #1a1a24, #0a0a14);
+    box-shadow:
+      0 1px 0 1px rgba(255, 255, 255, 0.04) inset,
+      0 0 0 7px #0a0a0f,
+      0 30px 60px -20px rgba(0, 0, 0, 0.65),
+      0 0 80px -10px color-mix(in oklab, var(--tm-indigo-500) 35%, transparent);
+    padding: 9px;
+    z-index: 1;
+    animation: tm-phoneFloat 8s ease-in-out infinite;
+  }
+  @keyframes tm-phoneFloat {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50%      { transform: translateY(-10px) rotate(-0.5deg); }
+  }
+
+  .tm-phone__notch {
+    position: absolute;
+    top: 16px; left: 50%;
+    transform: translateX(-50%);
+    width: 96px; height: 26px;
+    background: #000;
+    border-radius: 16px;
+    z-index: 3;
+  }
+
+  .tm-phone__screen {
+    width: 100%; height: 100%;
+    border-radius: 33px;
+    background: var(--pwa-bg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    color: var(--pwa-text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  /* ==== iOS status bar ==== */
+  .tm-ios-bar {
+    position: relative;
+    z-index: 4;
+    height: 42px;
+    padding: 12px 22px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: var(--pwa-text);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+  }
+  .tm-ios-bar__sigs { display: inline-flex; align-items: center; gap: 5px; }
+
+  /* ==== App ambient background (mirrors PWA body) ==== */
+  .tm-pwa {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+      radial-gradient(900px 500px at 100% -20%, rgba(110, 168, 254, 0.10), transparent 60%),
+      radial-gradient(700px 400px at -10% 10%, rgba(76, 201, 160, 0.05), transparent 60%),
+      var(--pwa-bg);
+  }
+
+  /* ==== App-bar ==== */
+  .tm-pwa__appbar {
+    position: relative;
+    z-index: 2;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px 0 10px;
+    background: rgba(15, 17, 21, 0.82);
+    backdrop-filter: saturate(140%) blur(16px);
+    -webkit-backdrop-filter: saturate(140%) blur(16px);
+    border-bottom: 1px solid var(--pwa-border-soft);
+  }
+  .tm-pwa__logo {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    filter: drop-shadow(0 3px 8px rgba(110, 168, 254, 0.25));
+    flex-shrink: 0;
+  }
+  .tm-pwa__title {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--pwa-text);
+  }
+  .tm-pwa__icon-btn {
+    display: grid; place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    color: var(--pwa-text-mute);
+  }
+
+  /* ==== Main scroll area ==== */
+  .tm-pwa__main {
+    flex: 1;
+    padding: 14px 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  /* ==== Now-Card ==== */
+  .tm-pwa__now-card {
+    position: relative;
+    background: linear-gradient(180deg, var(--pwa-surface), #171a21);
+    border: 1px solid var(--pwa-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .tm-pwa__now-pulse {
+    position: absolute;
+    top: 12px; right: 14px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--pwa-accent);
+    box-shadow: 0 0 0 0 var(--pwa-accent-pulse);
+    animation: tm-pwaPulse 2.4s ease-out infinite;
+  }
+  @keyframes tm-pwaPulse {
+    0%   { box-shadow: 0 0 0 0 var(--pwa-accent-pulse); }
+    70%  { box-shadow: 0 0 0 9px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .tm-pwa__lbl {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--pwa-text-dim);
+  }
+  .tm-pwa__time {
+    font-size: 11px;
+    color: var(--pwa-text-mute);
+    letter-spacing: 0.01em;
+  }
+  .tm-pwa__module {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--pwa-text);
+    margin-top: 2px;
+  }
+  .tm-pwa__meta {
+    font-size: 11.5px;
+    color: var(--pwa-text-mute);
+  }
+
+  /* ==== Tile stack ==== */
+  .tm-pwa__tiles { display: flex; flex-direction: column; gap: 8px; }
+  .tm-pwa__tile {
+    background: linear-gradient(180deg, var(--pwa-surface), #171a21);
+    border: 1px solid var(--pwa-border);
+    border-radius: 12px;
+    padding: 10px 12px 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tm-pwa__tile-body { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .tm-pwa__tile-lbl {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--pwa-text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tm-pwa__count {
+    display: inline-grid; place-items: center;
+    min-width: 16px; height: 14px;
+    padding: 0 4px;
+    border-radius: 7px;
+    background: var(--pwa-accent-soft);
+    color: var(--pwa-accent);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .tm-pwa__tile-val {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--pwa-text);
+  }
+  .tm-pwa__tile-val--good { color: var(--pwa-success); }
+  .tm-pwa__tile-sub {
+    font-size: 11px;
+    color: var(--pwa-text-mute);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tm-pwa__diff-prev { color: var(--pwa-text-dim); }
+  .tm-pwa__diff-arrow { color: var(--pwa-text-dim); margin: 0 2px; }
+  .tm-pwa__diff-curr { color: var(--pwa-success); font-weight: 700; }
+  .tm-pwa__chev { color: var(--pwa-text-dim); flex-shrink: 0; }
+
+  /* ==== Push toast (animated) ==== */
+  .tm-pwa__toast {
+    position: absolute;
+    left: 50%;
+    bottom: calc(60px + 14px);
+    transform: translateX(-50%);
+    background: var(--pwa-surface-2);
+    border: 1px solid var(--pwa-border);
+    color: var(--pwa-text);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 6px 20px rgba(11, 18, 32, 0.45);
+    z-index: 5;
+    white-space: nowrap;
+    animation: tm-toastCycle 7s ease-in-out 1.2s infinite;
+  }
+  .tm-pwa__toast-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--pwa-success);
+    box-shadow: 0 0 8px var(--pwa-success);
+  }
+  @keyframes tm-toastCycle {
+    0%   { opacity: 0; transform: translate(-50%, 12px); }
+    8%   { opacity: 1; transform: translate(-50%, 0); }
+    50%  { opacity: 1; transform: translate(-50%, 0); }
+    58%  { opacity: 0; transform: translate(-50%, -8px); }
+    100% { opacity: 0; transform: translate(-50%, -8px); }
+  }
+
+  /* ==== Bottom-nav (no blur per "Backdrop-Blur-Once Rule") ==== */
+  .tm-pwa__bottomnav {
+    position: relative;
+    z-index: 2;
+    height: 60px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    background: var(--pwa-bg-elev);
+    border-top: 1px solid var(--pwa-border-soft);
+  }
+  .tm-pwa__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--pwa-text-dim);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .tm-pwa__tab-icon {
+    display: grid; place-items: center;
+    width: 48px; height: 26px;
+    border-radius: 999px;
+    transition: background 120ms ease;
+  }
+  .tm-pwa__tab--active { color: var(--pwa-accent); }
+  .tm-pwa__tab--active .tm-pwa__tab-icon { background: var(--pwa-accent-soft); }
+  .tm-pwa__tab-lbl {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* ==== Glow behind phone ==== */
+  .tm-glow {
+    position: absolute;
+    inset: 5% 5%;
+    background: radial-gradient(ellipse at center, color-mix(in oklab, var(--tm-violet-500) 30%, transparent), transparent 70%);
+    filter: blur(50px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tm-phone, .tm-pwa__now-pulse, .tm-pwa__toast {
+      animation: none !important;
+    }
+    html.tm-anim .tm-showcase__copy[data-reveal]:not(.is-visible),
+    html.tm-anim .tm-showcase__visual[data-reveal]:not(.is-visible) {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  const els = document.querySelectorAll<HTMLElement>('.tm-showcase__copy[data-reveal], .tm-showcase__visual[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.2 }
+    );
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('is-visible'));
+  }
+</script>
